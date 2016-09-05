@@ -11,14 +11,15 @@
           </a>
         </div>
         <ul class="nav">
-            <li class="active">
-                <a href="#/home">
+            <!--style list elements using routerLinkActive-->
+            <li routerLinkActive="active">  
+                <a routerLink="/dashboard">
                     <i class="pe-7s-graph"></i>
                     <p>Dashboard</p>
                 </a>
             </li>
-            <li>
-                <a [routerLink]="['/about']">
+            <li routerLinkActive="active">
+                <a routerLink="/trip">
                     <i class="pe-7s-map-marker"></i>
                     <p>Trip Planner</p>
                 </a>
@@ -70,11 +71,12 @@
         <!--End of Top Bar Nav-->
     
     <!--Main Content Goes Here-->
-    <main>
-      <router-outlet></router-outlet>
-    </main>
-
-    <!--End of Body Stuff-->
+    <div class="content">
+        <main>
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+    <!--End of Main Content-->
 
     </div>
     <!--Main Panel-->
