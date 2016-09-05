@@ -1,0 +1,84 @@
+
+<!--Start Content-->
+<div class="wrapper">
+
+    <!--Sidebar Nav-->
+    <div class="sidebar" data-color="blue" data-image="assets/img/sidebar-5.jpg">
+    	<div class="sidebar-wrapper">
+        <div class="logo">
+          <a class="simple-text" [routerLink]="['/']">
+            AUV Control
+          </a>
+        </div>
+        <ul class="nav">
+            <li class="active">
+                <a href="#/home">
+                    <i class="pe-7s-graph"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            <li>
+                <a [routerLink]="['/about']">
+                    <i class="pe-7s-map-marker"></i>
+                    <p>Trip Planner</p>
+                </a>
+            </li>
+        </ul>
+    	</div>
+    </div>
+    <!--End of Sidebar Nav-->
+
+    <!--Main Panel-->
+    <div class="main-panel">
+
+       <!--Top Bar Nav-->
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <a class="navbar-brand" href="#"><i class="fa fa-circle text-danger"></i> Disconnected</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <!--Lef Side Top Bar-->
+                    <ul class="nav navbar-nav navbar-left">
+                        <li>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-history"></i> Last Seen 3 minutes ago
+                            </a>
+                        </li>
+                    </ul>
+                    <!--End of Left Side Top Bar-->
+
+                    <!--Right Side Top Bar-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#">
+                                Log out
+                            </a>
+                        </li>
+                    </ul>
+                    <!--End of Right Side Top Bar-->
+                </div>
+            </div>
+        </nav>
+        <!--End of Top Bar Nav-->
+    
+    <!--Main Content Goes Here-->
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+
+    <!--End of Body Stuff-->
+
+    </div>
+    <!--Main Panel-->
+    
+</div>
+<!--End of Content-->
+
