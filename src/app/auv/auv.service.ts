@@ -34,19 +34,39 @@ export class AuvService {
             console.log("don't know how to authenticate using '" + method + "'");
             throw "don't know how to authenticate using '" + method + "'";
         }
-    }
+    };
 
     private onClose(reason, details) {
+        this.connected = false;
         console.log("disconnected", reason, details.reason, details);
     };
 
-    private onOpen(session) {
+    private onHeartbeat (data) {
+        this.connected = true;
+        console.log("onHeartbeat() event received with data:" + data);
+    };
+
+    private onOpen(session, details) {
         console.log('Connected to WAMP Router');
+        console.log("connected session with ID " + session.id);
+        console.log("authenticated using method '" + details.authmethod + "' and provider '" + details.authprovider + "'");
+        console.log("authenticated with authid '" + details.authid + "' and authrole '" + details.authrole + "'");
+
+        session.subscribe('com.auv.heartbeat', (data) => {this.onHeartbeat(data)}).then(
+            function (sub) {
+                console.log('subscribed to topic');
+            },
+            function (err) {
+                console.log('failed to subscribe to topic', err);
+            }
+        );
     };
 
     connect() {
-        this.crossbar.onopen = (session) => {this.onOpen(session)};
-        this.crossbar.onclose = (session, detail) => {this.onClose(session, detail)};
+        // Note we need to use lamba functions here
+        // to ensure the correct `this` is set when calling these functions
+        this.crossbar.onopen = (session, details) => {this.onOpen(session, details)};
+        this.crossbar.onclose = (session, details) => {this.onClose(session, details)};
         console.log('Opening connection to WAMP router');
         this.crossbar.open();
     };

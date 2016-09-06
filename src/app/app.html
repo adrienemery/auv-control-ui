@@ -40,7 +40,17 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand" href="#"><i class="fa fa-circle text-danger"></i>Disconnected</a>
+            <a class="navbar-brand" href="#">
+                <div *ngIf="auvConnected() === false">
+                    <i class="fa fa-circle text-danger"></i>
+                        Disconnected
+                </div>
+                <div *ngIf="auvConnected() === true">
+                    <i class="fa fa-circle text-info"></i>
+                        Connected
+                </div>
+            </a>
+
         </div>
         <div class="collapse navbar-collapse">
             <!--Lef Side Top Bar-->

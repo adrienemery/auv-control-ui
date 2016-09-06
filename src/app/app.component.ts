@@ -18,6 +18,10 @@ export class AppComponent implements OnInit {
     this.auv.connect()
   }
 
+  auvConnected() {
+    return this.auv.connected;
+  }
+
   loggedIn() {
     return this.auth.authenticated;
   }
