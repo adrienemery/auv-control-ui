@@ -1,10 +1,13 @@
 import {Routes} from '@angular/router';
+
+import {DashboardComponent} from './dashboard/dashboard';
+import {LoginComponent} from './login/login.component';
 import {Trip} from './trip/trip';
-import {Dashboard} from './dashboard/dashboard';
 
 export const rootRouterConfig: Routes = [
   {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-  {path: 'dashboard', component: Dashboard},
+  { path: 'login', component: LoginComponent},
+  {path: 'dashboard', component: DashboardComponent},
   {path: 'trip', component: Trip},
 ];
 
