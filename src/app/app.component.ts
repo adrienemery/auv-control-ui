@@ -19,7 +19,27 @@ export class AppComponent implements OnInit {
   }
 
   auvConnected() {
-    return this.auv.connected;
+    if (this.auv.connected && Date.now() - this.auv.lastSeen < 5000) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  lastSeen() {
+    var date = new Date(Date.now() - this.auv.lastSeen);
+    // Hours part from the timestamp
+    var hours = date.getHours();
+    // Minutes part from the timestamp
+    var minutes = date.getMinutes();
+    // Seconds part from the timestamp
+    var seconds = date.getSeconds();
+
+    if (minutes > 0) {
+      return minutes.toString() + ' minutes';
+    } else {
+      return seconds.toString() + ' seconds';
+    }
   }
 
   loggedIn() {

@@ -6,14 +6,7 @@
                     <h4 class="title">Current Speed</h4>
                 </div>
                 <div class="content">
-                    <h4 class="title">0.4 m/s</h4>
-
-                    <div class="footer">
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-history"></i> Updated 3 minutes ago
-                        </div>
-                    </div>
+                    <h4 class="title">{{auv.speed}} m/s</h4>
                 </div>
             </div>
         </div>
@@ -24,13 +17,7 @@
                     <h4 class="title">Current Location</h4>
                 </div>
                 <div class="content">
-                    <h4 class="title">49.113124, -121.4243424</h4>
-                    <div class="footer">
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-history"></i> Updated 3 minutes ago
-                        </div>
-                    </div>
+                    <h4 class="title">{{auv.lat}}, {{auv.lng}}</h4>
                 </div>
             </div>
         </div>
@@ -41,16 +28,13 @@
                     <h4 class="title">Heading</h4>
                 </div>
                 <div class="content">
-                    <h4 class="title">184.2 South</h4>
-                    <div class="footer">
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-history"></i> Updated 3 minutes ago
-                        </div>
-                    </div>
+                    <h4 class="title">{{auv.heading}} &deg;</h4>
                 </div>
             </div>
         </div>
     </div>
+    <button type="button" class="btn btn-default" (click)="turnLeft($event)">Turn Left</button>
+    <button type="button" class="btn btn-default" (click)="turnRight($event)">Turn Right</button>
+    <button type="button" class="btn btn-default" (click)="moveForward($event)">Move Forward</button>
 
 </div>

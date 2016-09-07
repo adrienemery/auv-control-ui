@@ -14,8 +14,14 @@ export class AuvService {
                 private http: Http) {
     }
     
+    speed = 0.3;
+    lat = 49.1131;
+    lng = -121.4243;
+    heading = 125.0;
+    lastSeen: number = 0;
     connected: boolean = false;
     principal: string = 'frontend'
+    session: any
     crossbar = new autobahn.Connection({
         url: 'ws://127.0.0.1:8080/ws',
         realm: 'realm1',
@@ -43,23 +49,57 @@ export class AuvService {
 
     private onHeartbeat (data) {
         this.connected = true;
+        this.lastSeen = Date.now();
         console.log("onHeartbeat() event received with data:" + data);
     };
 
+    private onLeave (session, kwargs) {
+        console.log(session);
+        console.log(kwargs);
+    }
+
+    private onJoin (session, kwargs) {
+        console.log(session);
+        console.log(kwargs);
+    }
+
     private onOpen(session, details) {
+        this.session = session
         console.log('Connected to WAMP Router');
         console.log("connected session with ID " + session.id);
         console.log("authenticated using method '" + details.authmethod + "' and provider '" + details.authprovider + "'");
         console.log("authenticated with authid '" + details.authid + "' and authrole '" + details.authrole + "'");
-
+        
+        // subscribe to auv heartbeat so we know it's still alive
         session.subscribe('com.auv.heartbeat', (data) => {this.onHeartbeat(data)}).then(
             function (sub) {
-                console.log('subscribed to topic');
+                console.log('subscribed to topic' + sub);
             },
             function (err) {
                 console.log('failed to subscribe to topic', err);
             }
         );
+
+        // subscribe to `on_leave` topic so we can be notified if the auv drops offline
+        session.subscribe('wamp.session.on_leave', (session, kwargs) => {this.onLeave(session, kwargs)}).then(
+            function (sub) {
+                console.log('subscribed to topic' + sub);
+            },
+            function (err) {
+                console.log('failed to subscribe to topic', err);
+            }
+        );
+
+        // subscribe to `on_join` topic so we can be notified if the auv comes online
+        session.subscribe('wamp.session.on_join', (session_info, kwargs) => {this.onJoin(session, kwargs)}).then(
+            function (sub) {
+                console.log('subscribed to topic' + sub);
+            },
+            function (err) {
+                console.log('failed to subscribe to topic', err);
+            }
+        );
+        
     };
 
     connect() {
@@ -78,5 +118,36 @@ export class AuvService {
     getTrips() {
         // TODO
     };
+
+    turnRight(): void {
+        // TODO
+        console.log('turnRight');
+        this.session.call('com.auv.move_right').then(
+            function (res) {
+                console.log("move_right() result:", res);
+            },
+            function (err) {
+                console.log("move_right() error:", err);
+            }
+        );
+    };
+
+    turnLeft() {
+        // TODO
+        console.log('turnLeft');
+        this.session.call('com.auv.move_left').then(
+            function (res) {
+                console.log("move_left() result:", res);
+            },
+            function (err) {
+                console.log("move_left() error:", err);
+            }
+        );
+    };
+
+    stop() {
+        // TOOD
+        console.log('stop');
+    }
     
 }
