@@ -34,11 +34,15 @@ export class AuvService {
 
     private onChallenge(session, method, extra) {
         console.log("onchallenge", method, extra);
-        if (method === "ticket") {
-            return this.auth.getToken();
+        if (this.auth.authenticated()) {
+            if (method === "ticket") {
+                return this.auth.getToken();
+            } else {
+                console.log("don't know how to authenticate using '" + method + "'");
+                throw "don't know how to authenticate using '" + method + "'";
+            }
         } else {
-            console.log("don't know how to authenticate using '" + method + "'");
-            throw "don't know how to authenticate using '" + method + "'";
+            console.log('You are not logged in!');
         }
     };
 

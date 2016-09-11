@@ -6,7 +6,8 @@ import { AuvService } from './auv/auv.service';
 @Component({
   selector   : 'app',
   templateUrl: './app.html',
-  providers: [AuthService, AuvService]
+  styleUrls: ['./app.css'],
+  providers: []
 })
 export class AppComponent implements OnInit {
   
@@ -14,9 +15,14 @@ export class AppComponent implements OnInit {
               private auv: AuvService) {
   }
 
+  title: string = 'My Map';
+  lat: number = 49.2827;
+  lng: number = -123.1207;
+  zoom: number = 8;
+
   ngOnInit() {
-    this.auv.connect()
-  }
+    this.auv.connect();
+  };
 
   auvConnected() {
     if (this.auv.connected && Date.now() - this.auv.lastSeen < 5000) {
@@ -24,7 +30,7 @@ export class AppComponent implements OnInit {
     } else {
       return false;
     }
-  }
+  };
 
   lastSeen() {
     var date = new Date(Date.now() - this.auv.lastSeen);
@@ -40,9 +46,6 @@ export class AppComponent implements OnInit {
     } else {
       return seconds.toString() + ' seconds';
     }
-  }
+  };
 
-  loggedIn() {
-    return this.auth.authenticated;
-  }
 }

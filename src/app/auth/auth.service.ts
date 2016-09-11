@@ -1,7 +1,7 @@
 import { Injectable }      from '@angular/core';
-import { tokenNotExpired } from 'angular2-jwt';
 import {Http, Headers} from "@angular/http";
 
+import 'rxjs/add/operator/toPromise';
 
 
 @Injectable()
@@ -9,24 +9,42 @@ export class AuthService {
     constructor(private http: Http) {
     }
 
-    private _authenticated: boolean = true;
+    private authUrl = 'http://localhost:8000/api/auth/login/';
+    
 
-    login(event, username, password) {
-      console.log('logging in...');
+    login(username, password): Promise<any> {
+        console.log('logging in...');
+        var headers = new Headers({'Content-Type': 'application/json',
+                                   'Authorization': 'Basic ' + btoa(username + ':' + password)});
+        console.log(headers);                                   
+
+        return this.http.post(this.authUrl, {}, {headers: headers})
+                   .toPromise()
+                   .then(response => localStorage.setItem('token', response.json().token))
+                   .catch(this.handleError);
+    }
+
+    private handleError(error: any): Promise<any> {
+        console.error('An error occurred', error); // for demo purposes only
+        return Promise.reject(error.message || error);
     }
 
     authenticated() {
         // Check if there's an unexpired JWT
         // It searches for an item in localStorage with key == 'id_token'
-        return this._authenticated;
+        if (localStorage.getItem('token') !== null) {
+            return true;
+        } else {
+            return false;
+        }
     };
 
     logout() {
         // Remove token from localStorage
-        this._authenticated = false;
+        localStorage.removeItem('token');
     };
 
     getToken(): string {
-        return 'ad54f74ebfe00a72d53be43c71cccd48c65269cfe39dbe933ec9cc6bea1e7eec';  // TODO use local storage
+        return localStorage.getItem('token');  // TODO use local storage
     };
 }

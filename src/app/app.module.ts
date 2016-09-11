@@ -14,30 +14,28 @@ import {DashboardComponent} from './dashboard/dashboard';
 import {AuthService} from './auth/auth.service';
 import {AuvService} from './auv/auv.service';
 
-import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {AgmCoreModule} from 'angular2-google-maps/core';
 
 
 @NgModule({
+  imports: [
+    BrowserModule, 
+    FormsModule, 
+    HttpModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyDsR9YTzWEMaDQTj818Tv_FDCAZr1_vkPM'
+    }),
+    RouterModule.forRoot(rootRouterConfig),
+  ],
+  providers: [
+    AuthService, 
+    AuvService
+  ],
   declarations: [
     AppComponent, 
     LoginComponent,
     Trip, 
     DashboardComponent,
-  ],
-  imports: [
-    BrowserModule, 
-    FormsModule, 
-    HttpModule,
-    RouterModule.forRoot(rootRouterConfig),
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyDsR9YTzWEMaDQTj818Tv_FDCAZr1_vkPM'
-    })
-  ],
-  providers: [
-    {provide: LocationStrategy, useClass: HashLocationStrategy},
-    AuthService, 
-    AuvService
   ],
   bootstrap: [AppComponent]
 })
