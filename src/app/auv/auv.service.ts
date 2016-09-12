@@ -3,13 +3,14 @@ import { AuthService } from '../auth/auth.service';
 import {Http, Headers} from "@angular/http";
 
 
-// avoid name not found warning
+// avoid name not found warning since autobahn is included in `index.html`
 declare var autobahn: any;
 
 
 @Injectable()
 export class AuvService {
     // Handles communication with AUV via crossbar.io and database
+    // TODO move crossbar.io connection logic into its own service
     constructor(private auth: AuthService,
                 private http: Http) {
     }

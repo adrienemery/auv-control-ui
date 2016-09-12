@@ -1,6 +1,33 @@
-<h3>Trip Planner</h3>
-<p>{{title}}</p>
 
-<sebm-google-map [latitude]="lat" [longitude]="lng">
-  <sebm-google-map-marker [latitude]="lat" [longitude]="lng"></sebm-google-map-marker>
+<sebm-google-map 
+  [latitude]="lat"
+  [longitude]="lng"
+  [zoom]="zoom"
+  [disableDefaultUI]="false"
+  [zoomControl]="true"
+  (mapClick)="addWaypoint($event)">
+
+  <sebm-google-map-marker 
+      *ngFor="let waypoint of selectedTrip.waypoints; let i = index"
+      (markerClick)="clickedMarker(waypoint.label, i)"
+      [latitude]="waypoint.lat"
+      [longitude]="waypoint.lng"
+      [label]="waypoint.label"
+      [markerDraggable]="waypoint.draggable"
+      (dragEnd)="waypointDragEnd(waypoint, $event)">
+      
+    <sebm-google-map-info-window>
+      <button type="button" class="btn btn-danger btn-xs" (click)="removeWaypoint(i)">Delete</button>
+    </sebm-google-map-info-window>
+    
+  </sebm-google-map-marker>
+  
 </sebm-google-map>
+
+<div class="row">
+  <div class="col-sm-12">
+    <button type="button" class="btn btn-success" (click)="newTrip()">New Trip</button>
+    <button type="button" class="btn btn-primary">Save Trip</button>
+    <button type="button" class="btn btn-danger">Delete Trip</button>
+  </div>  
+</div>

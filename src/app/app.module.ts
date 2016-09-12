@@ -9,12 +9,14 @@ import {rootRouterConfig} from "./app.routes";
 import {AppComponent} from "./app.component";
 
 import { LoginComponent } from './login/login.component';
-import {Trip} from './trip/trip';
+import {TripComponent} from './trip/trip.component';
 import {DashboardComponent} from './dashboard/dashboard';
 import {AuthService} from './auth/auth.service';
 import {AuvService} from './auv/auv.service';
 
 import {AgmCoreModule} from 'angular2-google-maps/core';
+import { AuthHttp, AuthConfig, AUTH_PROVIDERS } from 'angular2-jwt';
+
 
 
 @NgModule({
@@ -29,12 +31,13 @@ import {AgmCoreModule} from 'angular2-google-maps/core';
   ],
   providers: [
     AuthService, 
-    AuvService
+    AuvService,
+    AuthHttp,    
   ],
   declarations: [
     AppComponent, 
     LoginComponent,
-    Trip, 
+    TripComponent, 
     DashboardComponent,
   ],
   bootstrap: [AppComponent]

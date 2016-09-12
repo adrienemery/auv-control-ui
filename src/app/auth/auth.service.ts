@@ -6,11 +6,19 @@ import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class AuthService {
+    // handles logging in/out to auv backend
+
     constructor(private http: Http) {
     }
 
     private authUrl = 'http://localhost:8000/api/auth/login/';
-    
+
+    private handleError(error: any): Promise<any> {
+        // remove token from localstorage if we get a 403 error
+        // and force user to login again
+        console.error('An error occurred', error);
+        return Promise.reject(error.message || error);
+    }
 
     login(username, password): Promise<any> {
         console.log('logging in...');
@@ -24,14 +32,13 @@ export class AuthService {
                    .catch(this.handleError);
     }
 
-    private handleError(error: any): Promise<any> {
-        console.error('An error occurred', error); // for demo purposes only
-        return Promise.reject(error.message || error);
-    }
+    logout() {
+        // Remove token from localStorage
+        localStorage.removeItem('token');
+    };
 
     authenticated() {
-        // Check if there's an unexpired JWT
-        // It searches for an item in localStorage with key == 'id_token'
+        // if there is a token in localstorage we return true
         if (localStorage.getItem('token') !== null) {
             return true;
         } else {
@@ -39,12 +46,8 @@ export class AuthService {
         }
     };
 
-    logout() {
-        // Remove token from localStorage
-        localStorage.removeItem('token');
+    getToken(): string {
+        return localStorage.getItem('token');
     };
 
-    getToken(): string {
-        return localStorage.getItem('token');  // TODO use local storage
-    };
 }

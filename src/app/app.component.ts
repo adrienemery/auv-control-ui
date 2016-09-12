@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   zoom: number = 8;
 
   ngOnInit() {
-    this.auv.connect();
+    // this.auv.connect();
   };
 
   auvConnected() {
