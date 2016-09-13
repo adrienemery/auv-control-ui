@@ -12,10 +12,11 @@ import { LoginComponent } from './login/login.component';
 import {TripComponent} from './trip/trip.component';
 import {DashboardComponent} from './dashboard/dashboard';
 import {AuthService} from './auth/auth.service';
+import {AuthHttp} from './auth/auth-http.service';
 import {AuvService} from './auv/auv.service';
 
 import {AgmCoreModule} from 'angular2-google-maps/core';
-import { AuthHttp, AuthConfig, AUTH_PROVIDERS } from 'angular2-jwt';
+
 
 
 

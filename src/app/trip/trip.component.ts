@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import { AuthHttp } from '../auth/auth-http.service';
 
 
 // just an interface for type safety.
@@ -29,15 +30,29 @@ export class TripComponent implements OnInit {
     zoom: number = 8;
     trips: Trip[] = [];
     selectedTrip: Trip;
+    tripsUrl: string = 'api/auvs/f00a7a7b-44cd-4a5f-b424-a15037ccece8/trips/'
+
+    constructor(private http:AuthHttp) { }
 
     ngOnInit() {
         this.newTrip();
+        this.getTrips();
+    }
+
+    getTrips() {
+        this.http.get(this.tripsUrl)
+                 .toPromise()
+                 .then(response => this.trips = response.json())
     }
     
     newTrip() {
         // create a new trip and add it to the trips array
         this.selectedTrip = new Trip();
         this.trips.push(this.selectedTrip);
+    }
+
+    saveTrip() {
+        // save the selectedTrip
     }
 
     addWaypoint($event) {
