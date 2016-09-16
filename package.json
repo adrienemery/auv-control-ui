@@ -50,10 +50,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/angular/angular2-seed.git"
+    "url": "https://github.com/adrienemery/auv-control-ui"
   },
   "bugs": {
-    "url": "https://github.com/angular/angular2-seed/issues"
+    "url": "https://github.com/adrienemery/auv-control-ui/issues"
   },
-  "homepage": "https://github.com/angular/angular2-seed#readme"
+  "homepage": "https://github.com/adrienemery/auv-control-ui#readme"
 }
