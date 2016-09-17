@@ -1,6 +1,7 @@
 import { Component, Injectable, OnInit} from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import {Http, Headers} from "@angular/http";
+import { Auv } from './auv';
 
 
 // avoid name not found warning since autobahn is included in `index.html`
@@ -23,6 +24,7 @@ export class AuvService {
     connected: boolean = false;
     principal: string = 'frontend'
     session: any
+    selectedAuv: Auv = {id: "f00a7a7b-44cd-4a5f-b424-a15037ccece8"};  // TODO get this from database
     crossbar = new autobahn.Connection({
         url: 'ws://127.0.0.1:8080/ws',
         realm: 'realm1',

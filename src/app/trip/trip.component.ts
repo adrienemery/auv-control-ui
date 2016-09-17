@@ -1,11 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Input} from '@angular/core';
 import { AuthHttp } from '../auth/auth-http.service';
+import { AuvService } from '../auv/auv.service';
+import { Auv } from '../auv/auv';
+import {MouseEvent} from 'angular2-google-maps/core';
 
 
 // just an interface for type safety.
 interface Waypoint {
 	lat: number;
 	lng: number;
+    order?: number;
 	label?: string;
 	draggable?: boolean;
 }
@@ -15,6 +19,10 @@ export class Trip {
   id: number;
   name: string;
   waypoints: Waypoint[] = [];
+
+  constructor() {
+      this.name = 'New Trip';
+  }
 }
 
 
@@ -30,19 +38,27 @@ export class TripComponent implements OnInit {
     zoom: number = 8;
     trips: Trip[] = [];
     selectedTrip: Trip;
-    tripsUrl: string = 'api/auvs/f00a7a7b-44cd-4a5f-b424-a15037ccece8/trips/'
-
-    constructor(private http:AuthHttp) { }
+    
+    constructor(private http:AuthHttp, private auvService: AuvService) { }
 
     ngOnInit() {
-        this.newTrip();
         this.getTrips();
+        console.log(this.auvService.selectedAuv);
     }
 
+    /*
+    * TODO move all these trip API interactions into the trip.service
+    */
+
     getTrips() {
-        this.http.get(this.tripsUrl)
+        this.http.get(this.getTripListUrl())
                  .toPromise()
-                 .then(response => this.trips = response.json())
+                 .then(response => {
+                    this.trips = response.json();
+                    if (this.trips) {
+                        this.selectedTrip = this.trips[0];
+                    }
+                 })
     }
     
     newTrip() {
@@ -51,11 +67,41 @@ export class TripComponent implements OnInit {
         this.trips.push(this.selectedTrip);
     }
 
-    saveTrip() {
-        // save the selectedTrip
+    selectTrip(trip: Trip) {
+        this.selectedTrip = trip;
     }
 
-    addWaypoint($event) {
+    getTripDetailUrl() {
+        // Note: the trailing slash is required
+        return this.getTripListUrl() + this.selectedTrip.id + '/'
+    }
+
+    getTripListUrl() {
+        return 'api/auvs/' + this.auvService.selectedAuv.id + '/trips/';
+    }
+
+    saveTrip() {
+        if (this.selectedTrip.id) {
+            // means we need to patch to update
+            this.http.patch(this.getTripDetailUrl(), JSON.stringify(this.selectedTrip))
+                     .toPromise()
+                     .then(response => console.log(response.json()))
+        } else { 
+            // otherwise we need to create a new Trip
+            this.http.post(this.getTripListUrl(), JSON.stringify(this.selectedTrip))
+                     .toPromise()
+                     .then(response => console.log(response.json()))
+        }
+        
+    }
+
+    deleteTrip() {
+        this.http.delete(this.getTripDetailUrl())
+                 .toPromise()
+                 .then(response => console.log(response.json()))
+    }
+
+    addWaypoint($event: MouseEvent) {
         console.log($event);
         var waypoint: Waypoint = {
             lat: $event.coords.lat,
@@ -63,8 +109,7 @@ export class TripComponent implements OnInit {
             draggable: true,
         }
         var index = this.selectedTrip.waypoints.push(waypoint);
-        waypoint.label = index.toString();
-        
+        waypoint.order = index;
     }
 
     removeWaypoint(index: number) {
@@ -72,15 +117,17 @@ export class TripComponent implements OnInit {
         // update labels for each waypoint
         this.selectedTrip.waypoints.forEach((waypoint: Waypoint, index: number, array: Waypoint[]) => {
             // offset index by one to keep labels 1-indexed
-            waypoint.label = (index + 1).toString();
+            waypoint.order = (index + 1);
         });
     }
 
-    clickedMarker(label: string, index: number) {
-        console.log(`clicked the marker: ${label || index}`)
+    clickedMarker(index: number) {
+        console.log(`clicked the marker: ${index}`)
     }
     
-    waypointDragEnd(m: Waypoint, $event: MouseEvent) {
-        console.log('dragEnd', m, $event);
+    waypointDragEnd(waypoint: Waypoint, $event: MouseEvent) {
+        waypoint.lat = $event.coords.lat;
+        waypoint.lng = $event.coords.lng;
+        console.log(waypoint);
     }
 }

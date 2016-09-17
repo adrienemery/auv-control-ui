@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { AuvService } from './auv/auv.service';
+import { Auv } from './auv/auv';
 
 
 @Component({

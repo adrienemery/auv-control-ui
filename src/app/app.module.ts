@@ -18,8 +18,6 @@ import {AuvService} from './auv/auv.service';
 import {AgmCoreModule} from 'angular2-google-maps/core';
 
 
-
-
 @NgModule({
   imports: [
     BrowserModule, 

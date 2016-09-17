@@ -1,4 +1,27 @@
 
+<div class="row">
+   <div class="col-sm-6">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Select Trip <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li *ngFor="let trip of trips" (click)="selectTrip(trip)" [class.selected]="trip === selectedTrip">
+          <!--TODO update list to show selected item-->
+          <a>{{ trip.name }}</a> 
+        </li>
+      </ul>
+    </div>
+   </div>
+   <div class="col-lg-6">
+    <div class="input-group input-group-lg">
+      <div *ngIf="selectedTrip">
+        <input type="text" class="form-control" placeholder="Trip Name" aria-describedby="basic-addon1" [(ngModel)]="selectedTrip.name">
+      </div>
+    </div>
+  </div>
+</div>
+
 <sebm-google-map 
   [latitude]="lat"
   [longitude]="lng"
@@ -7,27 +30,30 @@
   [zoomControl]="true"
   (mapClick)="addWaypoint($event)">
 
-  <sebm-google-map-marker 
-      *ngFor="let waypoint of selectedTrip.waypoints; let i = index"
-      (markerClick)="clickedMarker(waypoint.label, i)"
-      [latitude]="waypoint.lat"
-      [longitude]="waypoint.lng"
-      [label]="waypoint.label"
-      [markerDraggable]="waypoint.draggable"
-      (dragEnd)="waypointDragEnd(waypoint, $event)">
+  <div *ngIf="selectedTrip">
+    <sebm-google-map-marker 
+        *ngFor="let waypoint of selectedTrip.waypoints; let i = index"
+        (markerClick)="clickedMarker(waypoint.order, i)"
+        [latitude]="waypoint.lat"
+        [longitude]="waypoint.lng"
+        [label]="waypoint.order.toString()"
+        [markerDraggable]="true"
+        (dragEnd)="waypointDragEnd(waypoint, $event)">
       
-    <sebm-google-map-info-window>
-      <button type="button" class="btn btn-danger btn-xs" (click)="removeWaypoint(i)">Delete</button>
-    </sebm-google-map-info-window>
-    
-  </sebm-google-map-marker>
+      <sebm-google-map-info-window>
+        <button type="button" class="btn btn-danger btn-xs" (click)="removeWaypoint(i)">Delete</button>
+      </sebm-google-map-info-window>
+      
+    </sebm-google-map-marker>
+  </div>
   
 </sebm-google-map>
 
 <div class="row">
   <div class="col-sm-12">
+    
     <button type="button" class="btn btn-success" (click)="newTrip()">New Trip</button>
-    <button type="button" class="btn btn-primary">Save Trip</button>
-    <button type="button" class="btn btn-danger">Delete Trip</button>
+    <button type="button" class="btn btn-primary" (click)="saveTrip()">Save Trip</button>
+    <button type="button" class="btn btn-danger" (click)="deleteTrip()">Delete Trip</button>
   </div>  
 </div>
