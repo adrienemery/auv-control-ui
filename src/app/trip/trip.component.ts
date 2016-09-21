@@ -2,34 +2,17 @@ import {Component, OnInit, Input} from '@angular/core';
 import { AuthHttp } from '../auth/auth-http.service';
 import { AuvService } from '../auv/auv.service';
 import { Auv } from '../auv/auv';
+import { Trip, Waypoint } from './trip';
+import { TripService } from './trip.service';
+
 import {MouseEvent} from 'angular2-google-maps/core';
-
-
-// just an interface for type safety.
-interface Waypoint {
-	lat: number;
-	lng: number;
-    order?: number;
-	label?: string;
-	draggable?: boolean;
-}
-
-
-export class Trip {
-  id: number;
-  name: string;
-  waypoints: Waypoint[] = [];
-
-  constructor() {
-      this.name = 'New Trip';
-  }
-}
 
 
 @Component({
   selector: 'trip',
   styleUrls: ['./trip.css'],
-  templateUrl: './trip.html'
+  templateUrl: './trip.html',
+  providers: [TripService]
 })
 export class TripComponent implements OnInit {
     title: string = 'My Map';
@@ -39,26 +22,29 @@ export class TripComponent implements OnInit {
     trips: Trip[] = [];
     selectedTrip: Trip;
     
-    constructor(private http:AuthHttp, private auvService: AuvService) { }
+    constructor(private http:AuthHttp, 
+                private auvService: AuvService,
+                private tripService: TripService) { }
 
     ngOnInit() {
         this.getTrips();
-        console.log(this.auvService.selectedAuv);
     }
 
     /*
     * TODO move all these trip API interactions into the trip.service
     */
 
-    getTrips() {
-        this.http.get(this.getTripListUrl())
-                 .toPromise()
-                 .then(response => {
-                    this.trips = response.json();
-                    if (this.trips) {
-                        this.selectedTrip = this.trips[0];
-                    }
-                 })
+    getTrips(): void {
+        this.tripService.getTrips()
+                        .then(trips => {
+                            console.log(trips);
+                            if (trips) {
+                                this.trips = trips;
+                                this.selectedTrip = this.trips[0];
+                            } else{
+                                this.trips = [];
+                            }
+                        });
     }
     
     newTrip() {
@@ -71,34 +57,30 @@ export class TripComponent implements OnInit {
         this.selectedTrip = trip;
     }
 
-    getTripDetailUrl() {
-        // Note: the trailing slash is required
-        return this.getTripListUrl() + this.selectedTrip.id + '/'
-    }
-
-    getTripListUrl() {
-        return 'api/auvs/' + this.auvService.selectedAuv.id + '/trips/';
-    }
-
     saveTrip() {
         if (this.selectedTrip.id) {
             // means we need to patch to update
-            this.http.patch(this.getTripDetailUrl(), JSON.stringify(this.selectedTrip))
-                     .toPromise()
-                     .then(response => console.log(response.json()))
+            this.tripService.updateTrip(this.selectedTrip)
+                            .then(trip => console.log('Updated Trip: ' + trip))
         } else { 
             // otherwise we need to create a new Trip
-            this.http.post(this.getTripListUrl(), JSON.stringify(this.selectedTrip))
-                     .toPromise()
-                     .then(response => console.log(response.json()))
+            this.tripService.createTrip(this.selectedTrip)
+                            .then(trip => this.selectedTrip = trip)
         }
         
     }
 
     deleteTrip() {
-        this.http.delete(this.getTripDetailUrl())
-                 .toPromise()
-                 .then(response => console.log(response.json()))
+        this.tripService.deleteTrip(this.selectedTrip)
+                        .then(response => {
+                            this.trips.splice(this.trips.indexOf(this.selectedTrip), 1);
+                            if (this.trips) {
+                                this.selectedTrip = this.trips[0]
+                            } else {
+                                this.selectedTrip = null;
+                            }
+                            
+                        });       
     }
 
     addWaypoint($event: MouseEvent) {
