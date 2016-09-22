@@ -10,7 +10,8 @@ import {AppComponent} from "./app.component";
 
 import { LoginComponent } from './login/login.component';
 import {TripComponent} from './trip/trip.component';
-import {DashboardComponent} from './dashboard/dashboard';
+import {DashboardComponent} from './dashboard/dashboard.component';
+import {AuvComponent} from './auv/auv.component';
 import {AuthService} from './auth/auth.service';
 import {AuthHttp} from './auth/auth-http.service';
 import {AuvService} from './auv/auv.service';
@@ -38,6 +39,7 @@ import {AgmCoreModule} from 'angular2-google-maps/core';
     LoginComponent,
     TripComponent, 
     DashboardComponent,
+    AuvComponent,
   ],
   bootstrap: [AppComponent]
 })

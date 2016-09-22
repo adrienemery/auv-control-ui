@@ -13,7 +13,7 @@ import { Auv } from './auv/auv';
 export class AppComponent implements OnInit {
   
   constructor(private auth: AuthService,
-              private auv: AuvService) {
+              private auvService: AuvService) {
   }
 
   title: string = 'My Map';
@@ -23,10 +23,15 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // this.auv.connect();
+    this.auvService.getAuvs()
+                   .then(auvs => {
+                     this.auvService.selectedAuv = auvs[0];
+                     console.log(this.auvService.selectedAuv);
+                   });
   };
 
   auvConnected() {
-    if (this.auv.connected && Date.now() - this.auv.lastSeen < 5000) {
+    if (this.auvService.connected && Date.now() - this.auvService.lastSeen < 5000) {
       return true;
     } else {
       return false;
@@ -34,7 +39,7 @@ export class AppComponent implements OnInit {
   };
 
   lastSeen() {
-    var date = new Date(Date.now() - this.auv.lastSeen);
+    var date = new Date(Date.now() - this.auvService.lastSeen);
     // Hours part from the timestamp
     var hours = date.getHours();
     // Minutes part from the timestamp

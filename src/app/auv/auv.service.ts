@@ -1,6 +1,6 @@
 import { Component, Injectable, OnInit} from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import {Http, Headers} from "@angular/http";
+import { AuthHttp } from '../auth/auth-http.service';
 import { Auv } from './auv';
 
 
@@ -13,7 +13,7 @@ export class AuvService {
     // Handles communication with AUV via crossbar.io and database
     // TODO move crossbar.io connection logic into its own service
     constructor(private auth: AuthService,
-                private http: Http) {
+                private http: AuthHttp) {
     }
     
     speed = 0.3;
@@ -24,17 +24,17 @@ export class AuvService {
     connected: boolean = false;
     principal: string = 'frontend'
     session: any
-    selectedAuv: Auv = {id: "f00a7a7b-44cd-4a5f-b424-a15037ccece8"};  // TODO get this from database
+    selectedAuv: Auv;
     crossbar = new autobahn.Connection({
         url: 'ws://127.0.0.1:8080/ws',
         realm: 'realm1',
         // the following attributes must be set for Ticket-based authentication
-        //
         authmethods: ["ticket"],
         authid: this.principal,
         onchallenge: (session, method, extra) => {return this.onChallenge(session, method, extra)}
     });
 
+    // handle authentication challenge from crossbar router
     private onChallenge(session, method, extra) {
         console.log("onchallenge", method, extra);
         if (this.auth.authenticated()) {
@@ -49,27 +49,42 @@ export class AuvService {
         }
     };
 
+    // handle crossbar connection closed
     private onClose(reason, details) {
         this.connected = false;
         console.log("disconnected", reason, details.reason, details);
     };
 
+    // handle heartbeat from Auv
     private onHeartbeat (data) {
         this.connected = true;
         this.lastSeen = Date.now();
         console.log("onHeartbeat() event received with data:" + data);
     };
 
+    // handle new data updated from Auv
+    private onUpdate (data) {
+        this.connected = true;
+        this.lastSeen = Date.now();
+        console.log("onHeartbeat() event received with data:" + data);
+    };
+
+    // handle crossbar client leaving network
     private onLeave (session, kwargs) {
         console.log(session);
         console.log(kwargs);
     }
 
+    // handle crossbar client joining network
     private onJoin (session, kwargs) {
         console.log(session);
         console.log(kwargs);
     }
 
+    /* handle succesful join to crossbar router
+    *
+    *  Subscribe to topics and register RPC's
+    */ 
     private onOpen(session, details) {
         this.session = session
         console.log('Connected to WAMP Router');
@@ -78,7 +93,7 @@ export class AuvService {
         console.log("authenticated with authid '" + details.authid + "' and authrole '" + details.authrole + "'");
         
         // subscribe to auv heartbeat so we know it's still alive
-        session.subscribe('com.auv.heartbeat', (data) => {this.onHeartbeat(data)}).then(
+        session.subscribe(this.selectedAuv.address + '.auv.heartbeat', (data) => {this.onHeartbeat(data)}).then(
             function (sub) {
                 console.log('subscribed to topic' + sub);
             },
@@ -118,18 +133,9 @@ export class AuvService {
         this.crossbar.open();
     };
 
-    createTrip(name, waypoints) {
-        // TODO
-    };    
-
-    getTrips() {
-        // TODO
-    };
-
     turnRight(): void {
-        // TODO
         console.log('turnRight');
-        this.session.call('com.auv.move_right').then(
+        this.session.call(this.selectedAuv.address + '.auv.move_right').then(
             function (res) {
                 console.log("move_right() result:", res);
             },
@@ -140,9 +146,8 @@ export class AuvService {
     };
 
     turnLeft() {
-        // TODO
         console.log('turnLeft');
-        this.session.call('com.auv.move_left').then(
+        this.session.call(this.selectedAuv.address + '.auv.move_left').then(
             function (res) {
                 console.log("move_left() result:", res);
             },
@@ -153,8 +158,43 @@ export class AuvService {
     };
 
     stop() {
-        // TOOD
         console.log('stop');
+    }
+
+    getAuvListUrl() {
+        return 'api/auvs/' 
+    }
+
+    getAuvDetailUrl(auv: Auv) {
+        return 'api/auvs/' + auv.id + '/'
+    }
+
+    getAuvs(): Promise<Auv[]>  {
+        return this.http.get(this.getAuvListUrl())
+                         .toPromise()
+                         .then(response => response.json() as Auv[])
+                         .catch(error => console.log(error));
+    }
+
+    createAuv(auv: Auv): Promise<Auv> {
+        return this.http.post(this.getAuvListUrl(), JSON.stringify(auv))
+                        .toPromise()
+                        .then(response => response.json() as Auv) 
+                        .catch(error => console.log(error));
+    }
+
+    updateAuv(auv: Auv): Promise<Auv> {
+        return this.http.patch(this.getAuvDetailUrl(auv), JSON.stringify(auv))
+                        .toPromise()
+                        .then(response => response.json() as Auv)
+                        .catch(error => console.log(error));
+    }
+
+    deleteAuv(auv: Auv) {
+        return this.http.delete(this.getAuvDetailUrl(auv))
+                        .toPromise()
+                        .then(response => response)
+                        .catch(error => console.log(error));
     }
     
 }

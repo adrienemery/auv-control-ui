@@ -1,5 +1,5 @@
 
-export class Auv {
+export interface Auv {
     id: string;
     name?: string;
     description?: string;
