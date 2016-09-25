@@ -10,6 +10,7 @@ export interface Waypoint {
 export class Trip {
   id: number;
   name: string;
+  active: boolean;
   waypoints: Waypoint[] = [];
 
   constructor() {

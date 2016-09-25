@@ -1,0 +1,12 @@
+.sebm-google-map-container {
+  height: 300px; 
+  width: 100%; 
+  background-color: rgb(229, 227, 223);
+}
+
+.over-map { 
+    position: absolute; 
+    top: 10px; 
+    left: 10px; 
+    z-index: 99; 
+}

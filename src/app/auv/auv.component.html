@@ -31,6 +31,15 @@
                         </div>
                         
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Update Frequncy in Hz [0 to 10]</label>
+                                <input type="number" class="form-control" placeholder="Update Frequncy" [(ngModel)]="selectedAuv.update_frequency" name="update_freq" step="0.01" min="0" max="10">
+                            </div>
+                        </div>
+                        
+                    </div>
 
                     <div class="row">
                         <div class="col-md-12">

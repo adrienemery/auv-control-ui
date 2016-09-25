@@ -1,40 +1,76 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="header">
-                    <h4 class="title">Current Speed</h4>
-                </div>
-                <div class="content">
-                    <h4 class="title">{{auv.speed}} m/s</h4>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Current Speed</h4>
+                    </div>
+                    <div class="content">
+                        <h4 class="title">{{auv.speed}} m/s</h4>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="header">
-                    <h4 class="title">Current Location</h4>
-                </div>
-                <div class="content">
-                    <h4 class="title">{{auv.lat}}, {{auv.lng}}</h4>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Current Location</h4>
+                    </div>
+                    <div class="content">
+                        <h4 class="title">{{auv.lat}}, {{auv.lng}}</h4>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card">
-                <div class="header">
-                    <h4 class="title">Heading</h4>
-                </div>
-                <div class="content">
-                    <h4 class="title">{{auv.heading}} &deg;</h4>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="header">
+                        <h4 class="title">Heading</h4>
+                    </div>
+                    <div class="content">
+                        <h4 class="title">{{auv.heading}} &deg;</h4>
+                    </div>
                 </div>
             </div>
         </div>
+        
+        <div class="row">   
+            <div class="col-lg-12">
+                <sebm-google-map 
+                    [latitude]="lat"
+                    [longitude]="lng"
+                    [zoom]="zoom"
+                    [disableDefaultUI]="false"
+                    [zoomControl]="true"
+                    (zoomChange)="onZoomChange($event)"
+                    (centerChange)="onCenterChange($event)">
+
+                    <sebm-google-map-circle 
+                        [latitude]="currentPosition.lat"
+                        [longitude]="currentPosition.lng"
+                        [radius]="circleRadius"
+                        [fillColor]="'red'"
+                        [circleDraggable]="false"
+                        [editable]="false">
+                    </sebm-google-map-circle>
+
+                    <div *ngIf="getActiveTrip()">
+                        <sebm-google-map-marker *ngFor="let waypoint of getActiveTrip().waypoints"
+                            [latitude]="waypoint.lat" [longitude]="waypoint.lng" [label]="waypoint.order.toString()" [markerDraggable]="false">
+                        </sebm-google-map-marker>
+                    </div>
+                </sebm-google-map>
+            </div>     
+        </div>
+    
+    <hr>
+    <div class="row">   
+        <div class="col-md-6">
+            <button type="button" class="btn btn-default btn-fill" (click)="turnLeft($event)">Turn Left</button>
+            <button type="button" class="btn btn-default btn-fill" (click)="turnRight($event)">Turn Right</button>
+            <button type="button" class="btn btn-default btn-fill" (click)="moveForward($event)">Move Forward</button>
+            <button type="button" class="btn btn-danger btn-fill" (click)="stop($event)">Stop</button>
+        </div>     
     </div>
-    <button type="button" class="btn btn-default" (click)="turnLeft($event)">Turn Left</button>
-    <button type="button" class="btn btn-default" (click)="turnRight($event)">Turn Right</button>
-    <button type="button" class="btn btn-default" (click)="moveForward($event)">Move Forward</button>
 
 </div>

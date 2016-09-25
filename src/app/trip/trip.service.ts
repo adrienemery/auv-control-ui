@@ -8,6 +8,8 @@ import { Trip, Waypoint } from './trip';
 
 @Injectable()
 export class TripService {
+
+    activeTrip: Trip
     
     constructor(private http:AuthHttp, 
                 private auvService: AuvService) { 
@@ -23,7 +25,6 @@ export class TripService {
     }
     
     getTrips(): Promise<Trip[]>  {
-        // console.log(this.getTripListUrl());
         return this.http.get(this.getTripListUrl())
                          .toPromise()
                          .then(response => response.json() as Trip[])
