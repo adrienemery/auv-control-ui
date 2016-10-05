@@ -20,23 +20,27 @@ export class AppComponent implements OnInit {
   lat: number = 49.2827;
   lng: number = -123.1207;
   zoom: number = 8;
+  auvConnected: boolean = false;
 
   ngOnInit() {
-    // this.auv.connect();
+    this.auvService.connect();
     this.auvService.getAuvs()
                    .then(auvs => {
                      this.auvService.selectedAuv = auvs[0];
                      console.log(this.auvService.selectedAuv);
                    });
+    this.checkAuvConnected();
   };
 
-  auvConnected() {
-    if (this.auvService.connected && Date.now() - this.auvService.lastSeen < 5000) {
-      return true;
+  checkAuvConnected() {
+    if (this.auvService.connected && (Date.now() - this.auvService.lastSeen) < 5000) {
+      this.auvConnected = true;
     } else {
-      return false;
+      this.auvConnected = false;
     }
-  };
+    // call ourself every 1 second
+    setTimeout(() => this.checkAuvConnected(), 1000);
+  }
 
   lastSeen() {
     var date = new Date(Date.now() - this.auvService.lastSeen);

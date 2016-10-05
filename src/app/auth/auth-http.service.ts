@@ -18,7 +18,7 @@ export class AuthConfig {
     public noTokenScheme: boolean = false;
     
     public tokenName: string = 'token';
-    public baseUrl: string = 'http://localhost:8000/'
+    public baseUrl: string = 'http://127.0.0.1:8000/'
 
     public tokenGetter(): string {
       return localStorage.getItem(this.tokenName);

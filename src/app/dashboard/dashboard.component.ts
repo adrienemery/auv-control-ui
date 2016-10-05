@@ -16,7 +16,7 @@ var TRIP = 'trip';
 export class DashboardComponent implements OnInit {
 
   circleRadius: number
-  zoom: number = 8
+  zoom: number = 12
   lat: number = 49.2827
   lng: number = -123.1207
   currentPosition: any;
@@ -43,6 +43,16 @@ export class DashboardComponent implements OnInit {
   turnLeft(event) {
     console.log(event);
     this.auv.turnLeft();
+  }
+
+  moveForward(event) {
+    console.log(event);
+    this.auv.moveForward();
+  }
+
+  stop(event) {
+    console.log(event);
+    this.auv.stop();
   }
 
   getCurrentPosition() {

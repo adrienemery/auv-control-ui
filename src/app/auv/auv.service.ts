@@ -7,6 +7,15 @@ import { Auv } from './auv';
 // avoid name not found warning since autobahn is included in `index.html`
 declare var autobahn: any;
 
+interface AuvData {
+    lat: number;
+    lng: number;
+    heading: number;
+    mode: string;
+    speed: number;
+    left_motor_speed: number;
+    right_motor_speed: number;
+}
 
 @Injectable()
 export class AuvService {
@@ -16,10 +25,10 @@ export class AuvService {
                 private http: AuthHttp) {
     }
     
-    speed = 0.3;
+    speed = 0.0;
     lat = 49.1131;
     lng = -121.4243;
-    heading = 125.0;
+    heading = 180;
     lastSeen: number = 0;
     connected: boolean = false;
     principal: string = 'frontend'
@@ -66,7 +75,13 @@ export class AuvService {
     private onUpdate (data) {
         this.connected = true;
         this.lastSeen = Date.now();
-        console.log("onHeartbeat() event received with data:" + data);
+        // console.log("onUpdate() event received");
+        // console.log(data[0]);
+        let auvData = data[0] as AuvData 
+        this.lat = auvData.lat
+        this.lng = auvData.lng
+        this.heading = auvData.heading
+        this.speed = auvData.speed
     };
 
     // handle crossbar client leaving network
@@ -93,7 +108,7 @@ export class AuvService {
         console.log("authenticated with authid '" + details.authid + "' and authrole '" + details.authrole + "'");
         
         // subscribe to auv heartbeat so we know it's still alive
-        session.subscribe(this.selectedAuv.address + '.auv.heartbeat', (data) => {this.onHeartbeat(data)}).then(
+        session.subscribe('com.auv.update', (data) => {this.onUpdate(data)}).then(
             function (sub) {
                 console.log('subscribed to topic' + sub);
             },
@@ -133,9 +148,21 @@ export class AuvService {
         this.crossbar.open();
     };
 
+    moveForward() {
+       console.log('moveForward');
+        this.session.call('com.auv.move_forward').then(
+            function (res) {
+                console.log("move_forward() result:", res);
+            },
+            function (err) {
+                console.log("move_forward() error:", err);
+            }
+        ); 
+    }
+
     turnRight(): void {
         console.log('turnRight');
-        this.session.call(this.selectedAuv.address + '.auv.move_right').then(
+        this.session.call('com.auv.move_right').then(
             function (res) {
                 console.log("move_right() result:", res);
             },
@@ -147,7 +174,7 @@ export class AuvService {
 
     turnLeft() {
         console.log('turnLeft');
-        this.session.call(this.selectedAuv.address + '.auv.move_left').then(
+        this.session.call('com.auv.move_left').then(
             function (res) {
                 console.log("move_left() result:", res);
             },
@@ -159,6 +186,14 @@ export class AuvService {
 
     stop() {
         console.log('stop');
+        this.session.call('com.auv.stop').then(
+            function (res) {
+                console.log("stop() result:", res);
+            },
+            function (err) {
+                console.log("stop() error:", err);
+            }
+        );
     }
 
     getAuvListUrl() {

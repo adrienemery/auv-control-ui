@@ -1,4 +1,5 @@
 <div class="container-fluid">
+        <!-- Start Top Row -->
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
@@ -6,7 +7,7 @@
                         <h4 class="title">Current Speed</h4>
                     </div>
                     <div class="content">
-                        <h4 class="title">{{auv.speed}} m/s</h4>
+                        <h4 class="title">{{auv.speed | number:'.2-2'}} m/s</h4>
                     </div>
                 </div>
             </div>
@@ -17,7 +18,7 @@
                         <h4 class="title">Current Location</h4>
                     </div>
                     <div class="content">
-                        <h4 class="title">{{auv.lat}}, {{auv.lng}}</h4>
+                        <h4 class="title">{{auv.lat | number:'.5-5'}}, {{auv.lng | number:'.5-5'}}</h4>
                     </div>
                 </div>
             </div>
@@ -28,13 +29,16 @@
                         <h4 class="title">Heading</h4>
                     </div>
                     <div class="content">
-                        <h4 class="title">{{auv.heading}} &deg;</h4>
+                        <h4 class="title">{{auv.heading | number:'.1-1'}} &deg;</h4>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="row">   
+        <!-- End Top Row -->
+
+        <!-- Start Map -->
+        <div class="wrapper">
+        <div class="row">
             <div class="col-lg-12">
                 <sebm-google-map 
                     [latitude]="lat"
@@ -42,12 +46,13 @@
                     [zoom]="zoom"
                     [disableDefaultUI]="false"
                     [zoomControl]="true"
+                    [scrollwheel]="false"
                     (zoomChange)="onZoomChange($event)"
                     (centerChange)="onCenterChange($event)">
 
                     <sebm-google-map-circle 
-                        [latitude]="currentPosition.lat"
-                        [longitude]="currentPosition.lng"
+                        [latitude]="auv.lat"
+                        [longitude]="auv.lng"
                         [radius]="circleRadius"
                         [fillColor]="'red'"
                         [circleDraggable]="false"
@@ -60,10 +65,57 @@
                         </sebm-google-map-marker>
                     </div>
                 </sebm-google-map>
-            </div>     
+                
+                <!-- Compass -->
+                <canvas
+                    class="over-map"
+                    [attr.data-value]="auv.heading" 
+                    data-type="radial-gauge"
+                    data-width="150"
+                    data-height="150"
+                    data-min-value="0"
+                    data-max-value="360"
+                    data-major-ticks="N,NE,E,SE,S,SW,W,NW,N"
+                    data-minor-ticks="22"
+                    data-ticks-angle="360"
+                    data-start-angle="180"
+                    data-stroke-ticks="false"
+                    data-highlights="false"
+                    data-color-plate="#222"
+                    data-color-major-ticks="#f5f5f5"
+                    data-color-minor-ticks="#ddd"
+                    data-color-numbers="#ccc"
+                    data-color-needle="rgba(240, 128, 128, 1)"
+                    data-color-needle-end="rgba(255, 160, 122, .9)"
+                    data-value-box="false"
+                    data-value-text-shadow="false"
+                    data-color-circle-inner="#fff"
+                    data-color-needle-circle-outer="#ccc"
+                    data-needle-circle-size="15"
+                    data-needle-circle-outer="false"
+                    data-animation-rule="linear"
+                    data-needle-type="line"
+                    data-needle-start="75"
+                    data-needle-end="99"
+                    data-needle-width="5"
+                    data-borders="true"
+                    data-border-inner-width="0"
+                    data-border-middle-width="0"
+                    data-border-outer-width="10"
+                    data-color-border-outer="#ccc"
+                    data-color-border-outer-end="#ccc"
+                    data-color-needle-shadow-down="#222"
+                    data-border-shadow-width="0"
+                    data-animation-duration="1500"
+                ></canvas>
+                <!-- End Compass -->
+            </div>
         </div>
+        <!-- End Map -->
     
     <hr>
+
+    <!-- Manual Control Buttons -->
     <div class="row">   
         <div class="col-md-6">
             <button type="button" class="btn btn-default btn-fill" (click)="turnLeft($event)">Turn Left</button>
@@ -71,6 +123,8 @@
             <button type="button" class="btn btn-default btn-fill" (click)="moveForward($event)">Move Forward</button>
             <button type="button" class="btn btn-danger btn-fill" (click)="stop($event)">Stop</button>
         </div>     
+    </div>
+    <!-- End Manual Control Buttons -->
     </div>
 
 </div>
