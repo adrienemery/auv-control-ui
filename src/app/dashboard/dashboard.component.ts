@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core'
 import { AuvService } from '../auv/auv.service';
-import {LatLng} from 'angular2-google-maps/core';
-import { Trip } from '../trip/trip';
+import  { MouseEvent, LatLng } from 'angular2-google-maps/core';
+import { Trip, Waypoint} from '../trip/trip';
+import { TripService } from '../trip/trip.service';
+import {  } from 'angular2-google-maps/core';
 
 var MANUAL = 'manual';
 var GOTO_POINT = 'goto';
@@ -11,7 +13,8 @@ var TRIP = 'trip';
 @Component({
   selector: 'dashboard',
   styleUrls: ['./dashboard.css'],
-  templateUrl: './dashboard.html'
+  templateUrl: './dashboard.html',
+  providers: [TripService]
 })
 export class DashboardComponent implements OnInit {
 
@@ -19,20 +22,35 @@ export class DashboardComponent implements OnInit {
   zoom: number = 12
   lat: number = 49.2827
   lng: number = -123.1207
+  targetWaypoint: Waypoint
   currentPosition: any;
   controlMode: string = 'manual'
+  trips: Trip[]
+  selectedTrip: Trip
 
-  constructor(private auv: AuvService) { }
+  constructor(private auv: AuvService, 
+              private tripService: TripService) { }
 
   ngOnInit() {
     this.onZoomChange(this.zoom);
     this.getCurrentPosition();
+    this.targetWaypoint = {lat: this.lat, lng: this.lng} as Waypoint;
   }
 
   getActiveTrip() {
     if (this.auv.selectedAuv) {
       return this.auv.selectedAuv.active_trip;
     }
+  }
+  
+  waypointDragEnd($event: MouseEvent) {
+      this.targetWaypoint.lat = $event.coords.lat;
+      this.targetWaypoint.lng = $event.coords.lng;
+  }
+
+  moveToWaypoint(event: MouseEvent) {
+    console.log(this.targetWaypoint);
+    this.auv.moveToWaypoint(this.targetWaypoint.lat, this.targetWaypoint.lng);
   }
 
   turnRight(event) {
@@ -72,6 +90,5 @@ export class DashboardComponent implements OnInit {
     // console.log(latLng.lat, latLng.lng);
     this.currentPosition = latLng
   }
-
 
 }

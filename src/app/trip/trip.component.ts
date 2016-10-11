@@ -47,14 +47,24 @@ export class TripComponent implements OnInit {
                         });
     }
     
+    // create a new trip and add it to the trips array
     newTrip() {
-        // create a new trip and add it to the trips array
         this.selectedTrip = new Trip();
         this.trips.push(this.selectedTrip);
     }
 
     selectTrip(trip: Trip) {
         this.selectedTrip = trip;
+    }
+
+    // Saving the trip will trigger the database
+    // to propagate the changes to the AUV
+    // since any state changes made to the database get propogated
+    // this ensures that if the AUV is offline, it will still get
+    // the update to start the trip the next time it comes online
+    startTrip() {
+        this.selectedTrip.active = true;
+        this.saveTrip();
     }
 
     saveTrip() {

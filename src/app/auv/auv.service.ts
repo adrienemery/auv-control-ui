@@ -4,6 +4,11 @@ import { AuthHttp } from '../auth/auth-http.service';
 import { Auv } from './auv';
 
 
+interface Waypoint {
+    lat: number;
+    lng: number;
+}
+
 // avoid name not found warning since autobahn is included in `index.html`
 declare var autobahn: any;
 
@@ -15,6 +20,8 @@ interface AuvData {
     speed: number;
     left_motor_speed: number;
     right_motor_speed: number;
+    target_waypoint: Waypoint
+    timestamp: Date
 }
 
 @Injectable()
@@ -75,11 +82,12 @@ export class AuvService {
     private onUpdate (data) {
         this.connected = true;
         this.lastSeen = Date.now();
-        // console.log("onUpdate() event received");
-        // console.log(data[0]);
+        console.log("onUpdate() event received");
+        console.log(data[0]);
         let auvData = data[0] as AuvData 
         this.lat = auvData.lat
         this.lng = auvData.lng
+        // this.targetWaypoint = auvData.target_waypoint
         this.heading = auvData.heading
         this.speed = auvData.speed
     };
@@ -147,6 +155,17 @@ export class AuvService {
         console.log('Opening connection to WAMP router');
         this.crossbar.open();
     };
+
+    moveToWaypoint(lat, lng) {
+        this.session.call('com.auv.move_to_waypoint', [lat, lng]).then(
+            function (res) {
+                console.log("move_to_waypoint() result:", res);
+            },
+            function (err) {
+                console.log("move_to_waypoint() error:", err);
+            }
+        ); 
+    }
 
     moveForward() {
        console.log('moveForward');
