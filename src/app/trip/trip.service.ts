@@ -31,14 +31,14 @@ export class TripService {
                          .catch(error => console.log(error));
     }
 
-    createTrip(trip: Trip): Promise<Trip> {
+    createTrip(trip: Trip): Promise<any> {
         return this.http.post(this.getTripListUrl(), JSON.stringify(trip))
                         .toPromise()
                         .then(response => response.json() as Trip) 
                         .catch(error => console.log(error));
     }
 
-    updateTrip(trip: Trip): Promise<Trip> {
+    updateTrip(trip: Trip): Promise<any> {
         return this.http.patch(this.getTripDetailUrl(trip), JSON.stringify(trip))
                         .toPromise()
                         .then(response => response.json() as Trip)

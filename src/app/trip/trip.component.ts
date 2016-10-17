@@ -57,6 +57,13 @@ export class TripComponent implements OnInit {
         this.selectedTrip = trip;
     }
 
+    activateTrip() {
+        this.selectedTrip.active = true;
+        this.saveTrip().then(() => {
+            this.auvService.selectedAuv.active_trip = this.selectedTrip;
+        }).then(() => this.getTrips())
+    }
+
     // Saving the trip will trigger the database
     // to propagate the changes to the AUV
     // since any state changes made to the database get propogated
@@ -70,12 +77,12 @@ export class TripComponent implements OnInit {
     saveTrip() {
         if (this.selectedTrip.id) {
             // means we need to patch to update
-            this.tripService.updateTrip(this.selectedTrip)
-                            .then(trip => console.log('Updated Trip: ' + trip))
+            return this.tripService.updateTrip(this.selectedTrip)
+                                   .then(trip => console.log('Updated Trip: ' + trip))
         } else { 
             // otherwise we need to create a new Trip
-            this.tripService.createTrip(this.selectedTrip)
-                            .then(trip => this.selectedTrip = trip)
+            return this.tripService.createTrip(this.selectedTrip)
+                                   .then(trip => this.selectedTrip = trip)
         }
         
     }

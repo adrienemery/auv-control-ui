@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { AuthService } from './auth/auth.service';
 import { AuvService } from './auv/auv.service';
 import { Auv } from './auv/auv';
+import { TripService } from './trip/trip.service';
 
 
 @Component({
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit {
   lng: number = -123.1207;
   zoom: number = 8;
   auvConnected: boolean = false;
+  lastSeen: string = '0';
 
   ngOnInit() {
     this.auvService.connect();
@@ -30,6 +32,7 @@ export class AppComponent implements OnInit {
                      console.log(this.auvService.selectedAuv);
                    });
     this.checkAuvConnected();
+    this.updateLastSeen();
   };
 
   checkAuvConnected() {
@@ -42,7 +45,7 @@ export class AppComponent implements OnInit {
     setTimeout(() => this.checkAuvConnected(), 1000);
   }
 
-  lastSeen() {
+  updateLastSeen() {
     var date = new Date(Date.now() - this.auvService.lastSeen);
     // Hours part from the timestamp
     var hours = date.getHours();
@@ -52,10 +55,13 @@ export class AppComponent implements OnInit {
     var seconds = date.getSeconds();
 
     if (minutes > 0) {
-      return minutes.toString() + ' minutes';
+      this.lastSeen = minutes.toString() + ' minutes';
     } else {
-      return seconds.toString() + ' seconds';
+      this.lastSeen = seconds.toString() + ' seconds';
     }
+    
+    // call ourself every 5 seconds
+    setTimeout(() => this.updateLastSeen(), 5000);
   };
 
 }

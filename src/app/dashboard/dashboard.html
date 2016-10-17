@@ -59,7 +59,6 @@
                         [editable]="false">
                     </sebm-google-map-circle>
 
-
                     <div *ngIf="getActiveTrip()">
                         <sebm-google-map-marker *ngFor="let waypoint of getActiveTrip().waypoints"
                             [latitude]="waypoint.lat" [longitude]="waypoint.lng" [label]="waypoint.order.toString()" [markerDraggable]="false">
@@ -127,11 +126,12 @@
 
     <!-- Manual Control Buttons -->
     <div class="row">   
-        <div class="col-md-6">
+        <div class="col-md-12">
             <button type="button" class="btn btn-default btn-fill" (click)="turnLeft($event)">Turn Left</button>
             <button type="button" class="btn btn-default btn-fill" (click)="turnRight($event)">Turn Right</button>
             <button type="button" class="btn btn-default btn-fill" (click)="moveForward($event)">Move Forward</button>
             <button type="button" class="btn btn-danger btn-fill" (click)="stop($event)">Stop</button>
+            <button type="button" class="btn btn-success btn-fill" (click)="startTrip($event)">Start Trip</button>
         </div>
     </div>
     <!-- End Manual Control Buttons -->

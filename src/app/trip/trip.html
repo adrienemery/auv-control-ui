@@ -8,7 +8,12 @@
         <ul class="dropdown-menu">
           <li *ngFor="let trip of trips" (click)="selectTrip(trip)" [class.selected]="trip === selectedTrip">
             <!--TODO update list to show selected item-->
-            <a>{{ trip.name }}</a>
+            <a>
+              {{trip.name}}
+              <div *ngIf="trip.active">
+                (active)
+              </div>
+            </a>
           </li>
         </ul>
       </div>
@@ -46,6 +51,7 @@
     <div class="col-sm-12">
       <button type="button" class="btn btn-success btn-fill" (click)="newTrip()">New Trip</button>
       <button type="button" class="btn btn-info btn-fill" (click)="saveTrip()">Save Trip</button>
+      <button type="button" class="btn btn-info btn-fill" (click)="activateTrip()">Activate Trip</button>
       <button type="button" class="btn btn-danger pull-right" (click)="deleteTrip()">Delete Trip</button>
     </div>
   </div>

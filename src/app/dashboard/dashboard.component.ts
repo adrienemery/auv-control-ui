@@ -50,7 +50,15 @@ export class DashboardComponent implements OnInit {
 
   moveToWaypoint(event: MouseEvent) {
     console.log(this.targetWaypoint);
-    this.auv.moveToWaypoint(this.targetWaypoint.lat, this.targetWaypoint.lng);
+    this.auv.selectedAuv.mode = 'move_to_waypoint';
+    this.auv.selectedAuv.target_lat = this.targetWaypoint.lat;
+    this.auv.selectedAuv.target_lng = this.targetWaypoint.lng
+    this.auv.updateAuv(this.auv.selectedAuv)
+  }
+
+  startTrip() {
+    this.auv.selectedAuv.mode = 'trip'
+    this.auv.updateAuv(this.auv.selectedAuv);
   }
 
   turnRight(event) {
@@ -70,7 +78,10 @@ export class DashboardComponent implements OnInit {
 
   stop(event) {
     console.log(event);
-    this.auv.stop();
+    this.auv.selectedAuv.mode = 'manual'
+    this.auv.updateAuv(this.auv.selectedAuv).then(() => {
+      this.auv.stop();
+    });
   }
 
   getCurrentPosition() {
