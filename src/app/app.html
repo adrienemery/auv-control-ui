@@ -84,8 +84,11 @@
                     </a>   
                 </li>
                 <li>
-                    <a (click)="auth.logout()" href="#">
+                    <a *ngIf="auth.authenticated()" (click)="auth.logout()" href="">
                         Log out
+                    </a>
+                    <a *ngIf="auth.authenticated() === false" routerLink="/login">
+                        Login
                     </a>
                 </li>
             </ul>
