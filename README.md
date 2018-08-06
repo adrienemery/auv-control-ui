@@ -1,25 +1,21 @@
-## auv-control-ui
+# auv_control_ui
 
-Frontend for controlling AUV remotely.
-
-## Goals
-- Plan Trips
-- Take over full remote control
-- Analyze real-time/past data
-
-
-## Development
-
-### Setup Backend
-Follow the readme at: https://github.com/adrienemery/auv-control-api
-
-### Install NPM Packages
-```bash
-$ npm install
+## Project setup
+```
+npm install
 ```
 
-### Compile and Run Server
-```bash
-$ npm start
+### Compiles and hot-reloads for development
+```
+npm run serve
 ```
 
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
