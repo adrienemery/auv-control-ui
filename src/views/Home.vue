@@ -1,6 +1,9 @@
 <template>
   <div>
+
+    <!-- Navbar -->
     <nav class="navbar has-shadow">
+        <!-- Icon -->
         <div class="navbar-brand">
           <a class="navbar-item" href="../">
             <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox">
@@ -16,7 +19,7 @@
           </div>
         </div>
 
-        <div id="navMenu" class="navbar-menu">
+        <div class="navbar-menu">
           <div class="navbar-end">
             <div class="navbar-item">
               <span class="icon"><i class="fa fa-2x fa-battery-three-quarters"></i></span>
@@ -40,6 +43,8 @@
           </div>
         </div>
     </nav>
+    <!-- End Navbar -->
+
     <div class="main">
 
       <!-- Sidebar -->
@@ -48,10 +53,10 @@
             <div class="menu">
               <ul class="menu-list">
                 <li>
-                  <router-link to="/dash" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"> Dashboard</span></router-link>
+                  <router-link to="#dash" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"> Dashboard</span></router-link>
                 </li>
                 <li>
-                  <router-link to="/routes" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-map"></i></span><span class="name"> Routes</span></router-link>
+                  <router-link to="#routes" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-map"></i></span><span class="name"> Routes</span></router-link>
                 </li>
                 <li>
                   <router-link to="/settings" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"> Settings</span></router-link>
@@ -60,14 +65,17 @@
                   <router-link to="/debug" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"> Debug</span></router-link>
                 </li>
               </ul>
-
             </div>
           </div>
       </aside>
       <!-- End Sidebar -->
+
+      <!-- Content Right Hand Side -->
       <div class="content">
         <router-view></router-view>
       </div>
+      <!-- End Content -->
+
     </div>
   </div>
 
@@ -82,6 +90,9 @@ export default {
     ...mapState([
       'auvStatus'
     ])
+  },
+  mounted () {
+    // this.$wamp.publish('some-topic', [], {val: 20});
   },
   methods: {
     logout: function () {

@@ -4,14 +4,29 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import lodash from 'lodash'
+import VueWamp from 'vue-wamp'
 import Buefy from 'buefy'
 import 'buefy/lib/buefy.css'
 
 
 Vue.config.productionTip = false
 
-// use fontawseom icond pack with buefy
+// use font-awesome icon pack with buefy
 Vue.use(Buefy, {defaultIconPack: 'fa'})
+
+// configure vue wamp
+Vue.use(VueWamp, {
+  debug: true,
+  // lazy_open: false,
+  url: 'ws://localhost:8000/ws',
+  realm: 'realm1',
+  onopen: function(session, details) {
+      console.log('WAMP connected', session, details);
+  },
+  onclose: function(reason, details) {
+      console.log('WAMP closed: ' + reason, details);
+  }
+});
 
 // add lodash to the Vue prototype so its accessible globablly
 // componentes can access lodash via `this` keyword: "this.$lodash"
@@ -69,6 +84,7 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+// setup view instance
 new Vue({
   router,
   store,
