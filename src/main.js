@@ -17,7 +17,7 @@ Vue.use(Buefy, {defaultIconPack: 'fa'})
 // configure vue wamp
 Vue.use(VueWamp, {
   debug: true,
-  // lazy_open: false,
+  lazy_open: false,
   url: 'ws://localhost:8000/ws',
   realm: 'realm1',
   onopen: function(session, details) {
