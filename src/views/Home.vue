@@ -9,7 +9,10 @@
             <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox">
           </a>
           <div class="navbar-item">
-              <span>Status: {{ auvStatus }}</span>
+              <span><strong>WAMP Status:</strong> {{ auvStatus }}</span>
+          </div>
+          <div class="navbar-item">
+              <span><strong>Control Mode:</strong> {{ controlMode }}</span>
           </div>
 
           <div class="navbar-burger burger" data-target="navMenu">
@@ -88,7 +91,8 @@ export default {
   name: 'home',
   computed: {
     ...mapState([
-      'auvStatus'
+      'auvStatus',
+      'controlMode'
     ])
   },
   mounted () {

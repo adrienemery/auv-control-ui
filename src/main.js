@@ -8,23 +8,26 @@ import VueWamp from 'vue-wamp'
 import Buefy from 'buefy'
 import 'buefy/lib/buefy.css'
 
-
 Vue.config.productionTip = false
 
 // use font-awesome icon pack with buefy
 Vue.use(Buefy, {defaultIconPack: 'fa'})
 
+console.log(process.env)
+
 // configure vue wamp
 Vue.use(VueWamp, {
   debug: true,
   lazy_open: false,
-  url: 'ws://localhost:8000/ws',
+  url: process.env.VUE_APP_WAMP_URL,
   realm: 'realm1',
   onopen: function(session, details) {
       console.log('WAMP connected', session, details);
+      store.commit('SET_AUV_STATUS', 'Connected')
   },
   onclose: function(reason, details) {
       console.log('WAMP closed: ' + reason, details);
+      store.commit('SET_AUV_STATUS', 'Disconnected')
   }
 });
 
@@ -36,7 +39,7 @@ Object.defineProperty(Vue.prototype, '$lodash', {value: lodash})
 Object.defineProperty(Vue.prototype, '$http', {value: axios})
 
 // TODO setup a enviornment variable to manage the base url
-axios.defaults.baseURL = 'http://127.0.0.1:8000/'
+axios.defaults.baseURL = process.env.VUE_APP_API_URL
 
 // Add a request interceptor to add the JWT auth token to the request
 axios.interceptors.request.use(function (config) {
@@ -88,5 +91,10 @@ router.beforeEach((to, from, next) => {
 new Vue({
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
+  created () {
+    this.$wamp.subscribe('auv.update', function(args, kwArgs, details) {
+      this.$store.commit('UPDATE_AUV_DATA', args[0])
+    })
+  }
 }).$mount('#app')

@@ -126,25 +126,19 @@ import { mapState } from "vuex";
 
 export default {
   name: "debug",
+  computed: {
+    ...mapState([
+      'auvData'
+    ])
+  },
   data() {
     return {
       leftMotorSpeed: 0,
       rightMotorSpeed: 0,
       turnVal: 0,
       throttleVal: 0,
-      mode: "individual",
-      auvData: null
+      mode: "individual"
     };
-  },
-  wamp: {
-    subscribe: {
-      "auv.update": {
-        acknowledge: true,
-        function(args, kwArgs, details) {
-          this.auvData = args[0];
-        }
-      }
-    }
   },
   watch: {
     leftMotorSpeed(newVal, oldVal) {
@@ -197,7 +191,7 @@ export default {
     turnLeft(speed) {
       this.$wamp.call("auv.move_left", [speed]);
     },
-    moveCenter(speed) {
+    moveCenter() {
       this.$wamp.call("auv.move_center", []);
     },
     moveForward(speed) {
