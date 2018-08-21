@@ -157,7 +157,7 @@ export default {
       }
     },
     throttleVal(newVal, oldVal) {
-      if (newVal > 0) {
+      if (newVal >= 0) {
         this.moveForward(newVal);
       } else {
         this.moveReverse(newVal);

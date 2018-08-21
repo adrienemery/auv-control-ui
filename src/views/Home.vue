@@ -12,7 +12,7 @@
               <span><strong>WAMP Status:</strong> {{ auvStatus }}</span>
           </div>
           <div class="navbar-item">
-              <span><strong>Control Mode:</strong> {{ controlMode }}</span>
+              <span><strong>RC Armed:</strong> {{ rcData.armed }}</span>
           </div>
 
           <div class="navbar-burger burger" data-target="navMenu">
@@ -33,7 +33,7 @@
             <b-dropdown class="navbar-item">
               <a class="button" slot="trigger">
                   <b-icon icon="user-circle"></b-icon>
-                  <span>Account</span>
+                  <span>{{user.first_name}}</span>
                   <b-icon icon="angle-down"></b-icon>
               </a>
               <b-dropdown-item>
@@ -56,7 +56,7 @@
             <div class="menu">
               <ul class="menu-list">
                 <li>
-                  <router-link to="#dash" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"> Dashboard</span></router-link>
+                  <router-link to="/dash" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"> Dashboard</span></router-link>
                 </li>
                 <li>
                   <router-link to="#routes" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-map"></i></span><span class="name"> Routes</span></router-link>
@@ -92,8 +92,15 @@ export default {
   computed: {
     ...mapState([
       'auvStatus',
-      'controlMode'
+      'auvData',
+      'rcData',
+      'controlMode',
+      'user'
     ])
+  },
+  created () {
+    console.log('created')
+    this.$store.dispatch('getAuvs')
   },
   mounted () {
     // this.$wamp.publish('some-topic', [], {val: 20});

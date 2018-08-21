@@ -45,7 +45,7 @@ axios.defaults.baseURL = process.env.VUE_APP_API_URL
 axios.interceptors.request.use(function (config) {
   let token = localStorage.getItem('authToken')
   if (token) {
-    config['headers'] = {Authorization: 'JWT ' + token}
+    config['headers'] = {Authorization: 'Token ' + token}
   }
   return config
 }, function (error) {
@@ -93,8 +93,13 @@ new Vue({
   store,
   render: h => h(App),
   created () {
-    this.$wamp.subscribe('auv.update', function(args, kwArgs, details) {
+    // TODO when the wamp router disconnects and reconnects the subscription gets lost
+    // figure out how to have it resubscribe
+    this.$wamp.subscribe('auv.update', function(args) {
       this.$store.commit('UPDATE_AUV_DATA', args[0])
+    })
+    this.$wamp.subscribe('rc_control.update', function(args) {
+      this.$store.commit('UPDATE_RC_DATA', args[0])
     })
   }
 }).$mount('#app')

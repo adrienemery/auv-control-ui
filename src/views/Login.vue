@@ -23,7 +23,8 @@
                   Remember me
                 </label>
               </div>
-              <button class="button is-block is-info is-large is-fullwidth" @click="login">Login</button>
+              <!-- <button class="button is-block is-info is-large is-fullwidth" @click="login">Login</button> -->
+              <a class="button is-block is-info is-large is-fullwidth" @click="login">Login</a>
             </form>
           </div>
           <p class="has-text-grey">
@@ -46,29 +47,33 @@ export default {
       username: '',
       password: '',
       passwordType: '',
-      passwordErrorMsg: ''
+      passwordErrorMsg: 'error'
     }
   },
   methods: {
-    login: function () {
+    login () {
+      console.log('login')
       let vm = this
-      this.$http.post('api-token-auth/', {
-        username: this.username,
-        password: this.password
-      }, {
-        headers: {}
+        
+      this.$http.post('api/auth/login/', {}, {
+        headers: {},
+        auth: {
+          username: this.username,
+          password: this.password
+        }
       })
-        .then(function (response) {
-          console.log(response)
+        .then( (response) => {
+          console.info(response)
+          vm.$store.commit('SET_USER', response.data.user)
           let token = response.data.token
           localStorage.setItem('authToken', token)
-          vm.$http.defaults.headers.common['Authorization'] = 'JWT ' + token
+          vm.$http.defaults.headers.common['Authorization'] = 'Token ' + token
           vm.$router.push('dash')
         })
-        .catch(function (error) {
-          console.log(error)
+        .catch( (error) => {
+          console.error(error)
           vm.passwordType = 'is-danger'
-          vm.passwordErrorMsg = 'Invalid username and password'
+          vm.passwordErrorMsg = 'Invalid username or password'
         })
     }
   }

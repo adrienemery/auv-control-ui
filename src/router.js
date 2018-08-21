@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
+import Dashboard from './views/Dashboard.vue'
 import Debug from './views/Debug.vue'
 import Settings from './views/Settings.vue'
 
@@ -16,6 +17,11 @@ export default new Router({
       name: 'home',
       component: Home,
       children: [
+        {
+          path: '/dash',
+          name: 'dash',
+          component: Dashboard
+        },
         {
           path: '/debug',
           name: 'debug',
