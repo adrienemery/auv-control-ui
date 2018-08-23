@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <!-- Navbar -->
     <nav class="navbar has-shadow">
         <!-- Icon -->
@@ -33,7 +32,7 @@
             <b-dropdown class="navbar-item">
               <a class="button" slot="trigger">
                   <b-icon icon="user-circle"></b-icon>
-                  <span>{{user.first_name}}</span>
+                  <span>{{user.firstName}}</span>
                   <b-icon icon="angle-down"></b-icon>
               </a>
               <b-dropdown-item>
@@ -99,7 +98,6 @@ export default {
     ])
   },
   created () {
-    console.log('created')
     this.$store.dispatch('getAuvs')
   },
   mounted () {
