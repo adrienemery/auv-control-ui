@@ -27,6 +27,9 @@ export default new Vuex.Store({
         state.activeAuv = state.auvs[0]
       }
     },
+    SET_ACTIVE_AUV (state, data) {
+      state.activeAuv = data
+    },
     UPDATE_AUV_DATA (state, data) {
       state.auvData = data
     },
@@ -38,6 +41,15 @@ export default new Vuex.Store({
     } 
   },
   actions: {
+    getUser (context) {
+      this.$http.get('api/users/me')
+        .then(response => {
+          context.commit('SET_USER', response.data)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
     getAuvs (context) {
       this.$http.get('api/auvs')
         .then(response => {
@@ -45,6 +57,16 @@ export default new Vuex.Store({
         })
         .catch(error => {
           console.error(error)
+        })
+    },
+    updateAuv (context, data) {
+      let id = context.state.activeAuv.id
+      this.$http.patch('api/auvs/' + id + '/', data)
+        .then(response => {
+          context.state.commit('SET_AUV', response.data)
+        })
+        .catch(error => {
+          console.log(error)
         })
     }
   }

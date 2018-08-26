@@ -50,12 +50,17 @@ export default {
       passwordErrorMsg: 'error'
     }
   },
+  beforeMount () {
+    if (this.$wamp.isOpen()) {
+      this.$wamp.close()
+    }
+  },
   methods: {
     login () {
       console.log('login')
       let vm = this
         
-      this.$http.post('api/auth/login/', {}, {
+      this.$http.post('api/auth/token/login/', {}, {
         headers: {},
         auth: {
           username: this.username,
@@ -64,11 +69,14 @@ export default {
       })
         .then( (response) => {
           console.info(response)
-          vm.$store.commit('SET_USER', response.data.user)
-          let token = response.data.token
-          localStorage.setItem('authToken', token)
-          vm.$http.defaults.headers.common['Authorization'] = 'Token ' + token
-          vm.$router.push('dash')
+          if (response) {
+            vm.$store.commit('SET_USER', response.data.user)
+            let token = response.data.token
+            localStorage.setItem('authToken', token)
+            this.$wamp.open()
+            vm.$http.defaults.headers.common['Authorization'] = 'Token ' + token
+            vm.$router.push('dash')
+          }
         })
         .catch( (error) => {
           console.error(error)

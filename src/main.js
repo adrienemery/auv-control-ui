@@ -18,16 +18,25 @@ console.log(process.env)
 // configure vue wamp
 Vue.use(VueWamp, {
   debug: true,
-  lazy_open: false,
+  lazy_open: true,
   url: process.env.VUE_APP_WAMP_URL,
   realm: 'realm1',
+  authmethods: ['ticket'],
+  authid: 'admin',
   onopen: function(session, details) {
       console.log('WAMP connected', session, details);
       store.commit('SET_AUV_STATUS', 'Connected')
   },
+  onchallenge: function(session, method, details) {
+    if (method === 'ticket') {
+      return localStorage.getItem('authToken') 
+    }
+  },
   onclose: function(reason, details) {
       console.log('WAMP closed: ' + reason, details);
-      store.commit('SET_AUV_STATUS', 'Disconnected')
+      if (store.state.auvStatus !== 'Disconnected') {
+        store.commit('SET_AUV_STATUS', 'Disconnected')
+      }
   }
 });
 
@@ -72,7 +81,7 @@ function isAuthorized () {
   if (localStorage.getItem('authToken')) {
     return true
   } else {
-    return true // TODO set to false when auth flow implimented
+    return false // TODO set to false when auth flow implimented
   }
 }
 
@@ -92,14 +101,4 @@ new Vue({
   router,
   store,
   render: h => h(App),
-  created () {
-    // TODO when the wamp router disconnects and reconnects the subscription gets lost
-    // figure out how to have it resubscribe
-    this.$wamp.subscribe('auv.update', function(args) {
-      this.$store.commit('UPDATE_AUV_DATA', args[0])
-    })
-    this.$wamp.subscribe('rc_control.update', function(args) {
-      this.$store.commit('UPDATE_RC_DATA', args[0])
-    })
-  }
 }).$mount('#app')

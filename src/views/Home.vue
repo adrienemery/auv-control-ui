@@ -32,7 +32,7 @@
             <b-dropdown class="navbar-item">
               <a class="button" slot="trigger">
                   <b-icon icon="user-circle"></b-icon>
-                  <span>{{user.firstName}}</span>
+                  <span>{{user.first_name}}</span>
                   <b-icon icon="angle-down"></b-icon>
               </a>
               <b-dropdown-item>
@@ -98,15 +98,23 @@ export default {
     ])
   },
   created () {
+
+    // TODO when the wamp router disconnects and reconnects the subscription gets lost
+    // figure out how to have it resubscribe
+    this.$wamp.subscribe('auv.update', function(args) {
+      this.$store.commit('UPDATE_AUV_DATA', args[0])
+    })
+    this.$wamp.subscribe('rc_control.update', function(args) {
+      this.$store.commit('UPDATE_RC_DATA', args[0])
+    })
+    this.$store.dispatch('getUser')
     this.$store.dispatch('getAuvs')
-  },
-  mounted () {
-    // this.$wamp.publish('some-topic', [], {val: 20});
   },
   methods: {
     logout: function () {
       localStorage.removeItem('authToken')
       this.$router.push('/login')
+      // TOOD refresh page after logout to ensure the vuex store is cleared
     }
   }
 }
