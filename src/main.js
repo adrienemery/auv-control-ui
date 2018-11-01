@@ -47,7 +47,6 @@ Object.defineProperty(Vue.prototype, '$lodash', {value: lodash})
 // setup axios to be accessible globally using "this.$http"
 Object.defineProperty(Vue.prototype, '$http', {value: axios})
 
-// TODO setup a enviornment variable to manage the base url
 axios.defaults.baseURL = process.env.VUE_APP_API_URL
 
 // Add a request interceptor to add the JWT auth token to the request
@@ -81,11 +80,11 @@ function isAuthorized () {
   if (localStorage.getItem('authToken')) {
     return true
   } else {
-    return false // TODO set to false when auth flow implimented
+    return false
   }
 }
 
-// gaurd all routes against unauthorized users
+// guard all routes against unauthorized users
 // and redirect to the login page
 router.beforeEach((to, from, next) => {
   if (to.name !== 'login' && isAuthorized() === false) {

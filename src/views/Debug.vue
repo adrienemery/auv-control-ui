@@ -3,6 +3,7 @@
         <h3 class="header">Motor Controls</h3>
 
         <div class="control">
+            
             <label class="radio">
                 <input type="radio" value="individual" v-model="mode"> Individual Motor
             </label>
@@ -45,6 +46,15 @@
                     </p>
                     <div class="slidecontainer">
                         <input type="range" min="-100" max="100" value="50" class="slider" id="myRange" v-model="turnVal" :disabled="mode !== 'dual'">
+                    </div>
+                </div>
+                
+                <div class="column ">
+                    <p>Trim: {{trim}} %
+                        <button class="button is-info is-pulled-right" @click="trim = 0">Zero</button>
+                    </p>
+                    <div class="slidecontainer">
+                        <input type="range" min="-100" max="100" value="0" class="slider" id="myRange" v-model="trim">
                     </div>
                 </div>
 
@@ -135,6 +145,7 @@ export default {
     return {
       leftMotorSpeed: 0,
       rightMotorSpeed: 0,
+      trim: 0,
       turnVal: 0,
       throttleVal: 0,
       mode: "individual"
@@ -146,6 +157,9 @@ export default {
     },
     rightMotorSpeed(newVal, oldVal) {
       this.setRightMotor(newVal);
+    },
+    trim(newVal, oldVal) {
+      this.setTrim(newVal);
     },
     turnVal(newVal, oldVal) {
       if (newVal > 0) {
@@ -184,6 +198,9 @@ export default {
           console.log(error);
         }
       );
+    },
+    setTrim(trim) {
+      this.$wamp.call("auv.set_trim", [trim]);
     },
     turnRight(speed) {
       this.$wamp.call("auv.move_right", [speed]);
