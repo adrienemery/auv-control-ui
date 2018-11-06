@@ -21,11 +21,11 @@ Vue.use(VueWamp, {
   lazy_open: true,
   url: process.env.VUE_APP_WAMP_URL,
   realm: 'realm1',
-  authmethods: ['ticket'],
+  authmethods: ['ticket', 'anonymous'],
   authid: 'admin',
   onopen: function(session, details) {
       console.log('WAMP connected', session, details);
-      store.commit('SET_AUV_STATUS', 'Connected')
+      store.commit('SET_WAMP_STATUS', 'Connected')
   },
   onchallenge: function(session, method, details) {
     if (method === 'ticket') {
@@ -34,9 +34,7 @@ Vue.use(VueWamp, {
   },
   onclose: function(reason, details) {
       console.log('WAMP closed: ' + reason, details);
-      if (store.state.auvStatus !== 'Disconnected') {
-        store.commit('SET_AUV_STATUS', 'Disconnected')
-      }
+      store.commit('SET_WAMP_STATUS', 'Disconnected')
   }
 });
 
@@ -80,7 +78,7 @@ function isAuthorized () {
   if (localStorage.getItem('authToken')) {
     return true
   } else {
-    return false
+    return true
   }
 }
 

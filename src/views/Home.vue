@@ -5,23 +5,27 @@
         <!-- Icon -->
         <div class="navbar-brand">
           <a class="navbar-item" href="../">
-            <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox">
+            <img src="../assets/submarine-100.png" alt="AUV Control"><span> AUV Control</span> 
           </a>
           <div class="navbar-item">
-              <span><strong>WAMP Status:</strong> {{ auvStatus }}</span>
+              <span><strong>WAMP:</strong> {{ wampStatus }}</span>
           </div>
           <div class="navbar-item">
-              <span><strong>RC Armed:</strong> {{ rcData.armed }}</span>
+              <span><strong>AUV:</strong> {{ auvStatus }}</span>
+          </div>
+          <div class="navbar-item">
+              <span v-if="rcData.armed"><strong>RC:</strong> On</span>
+              <span v-else><strong>RC:</strong> Off</span>
           </div>
 
-          <div class="navbar-burger burger" data-target="navMenu">
+          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
             <span></span>
             <span></span>
             <span></span>
-          </div>
+          </a>
         </div>
 
-        <div class="navbar-menu">
+        <div id="navMenu" class="navbar-menu">
           <div class="navbar-end">
             <div class="navbar-item">
               <span class="icon"><i class="fa fa-2x fa-battery-three-quarters"></i></span>
@@ -73,7 +77,7 @@
       <!-- End Sidebar -->
 
       <!-- Content Right Hand Side -->
-      <div class="content">
+      <div class="content" style="overflow:scroll; height:100%;">
         <router-view></router-view>
       </div>
       <!-- End Content -->
@@ -90,6 +94,7 @@ export default {
   name: 'home',
   computed: {
     ...mapState([
+      'wampStatus',
       'auvStatus',
       'auvData',
       'rcData',
@@ -102,13 +107,15 @@ export default {
     // TODO when the wamp router disconnects and reconnects the subscription gets lost
     // figure out how to have it resubscribe
     this.$wamp.subscribe('auv.update', function(args) {
-      this.$store.commit('UPDATE_AUV_DATA', args[0])
+      this.$store.dispatch('updateAuvData', args[0])
     })
     this.$wamp.subscribe('rc_control.update', function(args) {
       this.$store.commit('UPDATE_RC_DATA', args[0])
     })
     this.$store.dispatch('getUser')
     this.$store.dispatch('getAuvs')
+
+    this.$router.push('dash')
   },
   methods: {
     logout: function () {

@@ -4,17 +4,13 @@
 
         <div class="control">
             
-            <label class="radio">
-                <input type="radio" value="individual" v-model="mode"> Individual Motor
-            </label>
-
             <div class="columns">
                 <div class="column">
                     <p>Left Motor: {{leftMotorSpeed}} %
                         <button class="button is-info is-pulled-right" @click="leftMotorSpeed = 0">Zero</button>
                     </p>
                     <div class="slidecontainer">
-                        <input type="range" min="-100" max="100" value="0" class="slider" id="myRange" v-model="leftMotorSpeed" :disabled="mode !== 'individual'">
+                        <input type="range" min="-100" max="100" value="0" class="slider" id="myRange" v-model="leftMotorSpeed">
                     </div>
                 </div>
                 <div class="column">
@@ -22,33 +18,9 @@
                         <button class="button is-info is-pulled-right" @click="rightMotorSpeed = 0">Zero</button>
                     </p>
                     <div class="slidecontainer">
-                        <input type="range" min="-100" max="100" value="0" class="slider" id="myRange" v-model="rightMotorSpeed" :disabled="mode !== 'individual'">
+                        <input type="range" min="-100" max="100" value="0" class="slider" id="myRange" v-model="rightMotorSpeed">
                     </div>
                 </div>
-            </div>
-
-            <label class="radio">
-                <input type="radio" value="dual" v-model="mode"> Steering Control
-            </label>
-
-            <div class="columns">
-                <div class="column">
-                    <p>Throttle: {{throttleVal}} %
-                        <button class="button is-info is-pulled-right" @click="throttleVal = 0">Zero</button>
-                    </p>
-                    <div class="slidecontainer">
-                        <input type="range" min="-100" max="100" value="50" class="slider" id="myRange" v-model="throttleVal" :disabled="mode !== 'dual'">
-                    </div>
-                </div>
-                <div class="column">
-                    <p>Turn: {{turnVal}} %
-                        <button class="button is-info is-pulled-right" @click="turnVal = 0">Zero</button>
-                    </p>
-                    <div class="slidecontainer">
-                        <input type="range" min="-100" max="100" value="50" class="slider" id="myRange" v-model="turnVal" :disabled="mode !== 'dual'">
-                    </div>
-                </div>
-                
                 <div class="column ">
                     <p>Trim: {{trim}} %
                         <button class="button is-info is-pulled-right" @click="trim = 0">Zero</button>
@@ -57,8 +29,8 @@
                         <input type="range" min="-100" max="100" value="0" class="slider" id="myRange" v-model="trim">
                     </div>
                 </div>
-
             </div>
+
         </div>
 
         <div class="section">
@@ -72,6 +44,7 @@
                                 <th>Right Motor</th>
                                 <th>Throttle</th>
                                 <th>Turn Speed</th>
+                                <th>Trim</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -80,6 +53,7 @@
                                 <td>{{auvData.right_motor_speed}}</td>
                                 <td>{{auvData.throttle}}</td>
                                 <td>{{auvData.turn_speed}}</td>
+                                <td>{{auvData.trim}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -146,8 +120,6 @@ export default {
       leftMotorSpeed: 0,
       rightMotorSpeed: 0,
       trim: 0,
-      turnVal: 0,
-      throttleVal: 0,
       mode: "individual"
     };
   },
@@ -161,22 +133,6 @@ export default {
     trim(newVal, oldVal) {
       this.setTrim(newVal);
     },
-    turnVal(newVal, oldVal) {
-      if (newVal > 0) {
-        this.turnRight(newVal);
-      } else if (newVal < 0) {
-        this.turnLeft(newVal);
-      } else {
-        this.moveCenter();
-      }
-    },
-    throttleVal(newVal, oldVal) {
-      if (newVal >= 0) {
-        this.moveForward(newVal);
-      } else {
-        this.moveReverse(newVal);
-      }
-    }
   },
   methods: {
     setLeftMotor(speed) {
@@ -202,21 +158,6 @@ export default {
     setTrim(trim) {
       this.$wamp.call("auv.set_trim", [trim]);
     },
-    turnRight(speed) {
-      this.$wamp.call("auv.move_right", [speed]);
-    },
-    turnLeft(speed) {
-      this.$wamp.call("auv.move_left", [speed]);
-    },
-    moveCenter() {
-      this.$wamp.call("auv.move_center", []);
-    },
-    moveForward(speed) {
-      this.$wamp.call("auv.forward_throttle", [speed]);
-    },
-    moveReverse(speed) {
-      this.$wamp.call("auv.reverse_throttle", [speed]);
-    }
   }
 };
 </script>

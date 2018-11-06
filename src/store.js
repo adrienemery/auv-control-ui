@@ -12,7 +12,9 @@ export default new Vuex.Store({
     user: {},
     auvs: [],
     activeAuv: null,
+    auvLastSeen: null,
     auvStatus: 'Disconnected',
+    wampStatus: 'Disconnected',
     controlMode: 'Manual',
     auvData: {},
     rcData: {armed: false},
@@ -32,15 +34,28 @@ export default new Vuex.Store({
     },
     UPDATE_AUV_DATA (state, data) {
       state.auvData = data
+      state.auvStatus = 'Connected'
+      state.auvLastSeen = Date.now()
     },
     SET_AUV_STATUS (state, status) {
       state.auvStatus = status
+    },
+    SET_WAMP_STATUS (state, status) {
+      state.wampStatus = status 
     },
     UPDATE_RC_DATA (state, data) {
       state.rcData = data
     } 
   },
   actions: {
+    updateAuvData (context, data) {
+      context.commit('UPDATE_AUV_DATA', data)
+      setTimeout(function () {
+        if (Date.now() - context.state.auvLastSeen > 5000) {
+          context.commit('SET_AUV_STATUS', 'Disconnected')
+        }
+      }, 6000)
+    },
     getUser (context) {
       this.$http.get('api/users/me')
         .then(response => {

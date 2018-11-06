@@ -4,7 +4,7 @@
       <div class="container has-text-centered">
         <div class="column is-4 is-offset-4">
           <!-- <span class="icon"><i class="fas fa-3x fa-ship logo"></i></span> -->
-          <img src="submarine-100.png" alt="">
+          <img src="../assets/submarine-100.png" alt="">
           <p class="subtitle has-text-grey">AUV Control</p>
           <div class="box">
             <form>

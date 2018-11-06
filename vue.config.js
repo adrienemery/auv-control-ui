@@ -1,9 +1,9 @@
 module.exports = {
   lintOnSave: false,
 
-  devServer: {
+  devServer: {  
     useLocalIp: false,
-    public: 'http://localhost:8081',
+    public: 'http://localhost:8081'
   },
 
   pluginOptions: {
