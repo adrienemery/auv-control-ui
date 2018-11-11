@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Dashboard from './views/Dashboard.vue'
 import Debug from './views/Debug.vue'
+import Controls from './views/Controls.vue'
 import Settings from './views/Settings.vue'
 
 Vue.use(Router)
@@ -21,6 +22,11 @@ export default new Router({
           path: '/dash',
           name: 'dash',
           component: Dashboard
+        },
+        {
+          path: '/controls',
+          name: 'controls',
+          component: Controls
         },
         {
           path: '/debug',

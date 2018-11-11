@@ -17,6 +17,7 @@ export default new Vuex.Store({
     wampStatus: 'Disconnected',
     controlMode: 'Manual',
     auvData: {},
+    currentPosition: null,
     rcData: {armed: false},
   },
   mutations: {
@@ -36,6 +37,11 @@ export default new Vuex.Store({
       state.auvData = data
       state.auvStatus = 'Connected'
       state.auvLastSeen = Date.now()
+    },
+    UPDATE_GPS_DATA (state, data) {
+      if (data.lat !== null) {
+        state.currentPosition = {lat: data.lat, lng: data.lng}
+      }
     },
     SET_AUV_STATUS (state, status) {
       state.auvStatus = status

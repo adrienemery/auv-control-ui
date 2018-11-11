@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import * as VueGoogleMaps from 'vue2-google-maps'
 import router from './router'
 import store from './store'
 import axios from 'axios'
@@ -15,11 +16,21 @@ Vue.use(Buefy, {defaultIconPack: 'fa'})
 
 console.log(process.env)
 
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: process.env.VUE_APP_MAPS_API_KEY,
+    // libraries: "places" // necessary for places input
+    autobindAllEvents: true,
+  }
+});
+
+
 // configure vue wamp
 Vue.use(VueWamp, {
   debug: true,
   lazy_open: true,
-  url: process.env.VUE_APP_WAMP_URL,
+  // url: process.env.VUE_APP_WAMP_URL,
+  url: 'ws://localhost:8090/ws',
   realm: 'realm1',
   authmethods: ['ticket', 'anonymous'],
   authid: 'admin',

@@ -5,7 +5,7 @@
         <!-- Icon -->
         <div class="navbar-brand">
           <a class="navbar-item" href="../">
-            <img src="../assets/submarine-100.png" alt="AUV Control"><span> AUV Control</span> 
+            <img src="../assets/submarine-100.png" alt="AUV Control"><span></span> 
           </a>
           <div class="navbar-item">
               <span><strong>WAMP:</strong> {{ wampStatus }}</span>
@@ -17,6 +17,10 @@
               <span v-if="rcData.armed"><strong>RC:</strong> On</span>
               <span v-else><strong>RC:</strong> Off</span>
           </div>
+          <div class="navbar-item">
+            <button class="button is-danger">Stop</button>
+          </div>
+
 
           <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
             <span></span>
@@ -54,7 +58,7 @@
     <div class="main">
 
       <!-- Sidebar -->
-      <aside class="sidebar hero is-fullheight">
+      <aside class="sidebar hero is-fullheight is-hidden-mobile">
           <div>
             <div class="menu">
               <ul class="menu-list">
@@ -62,13 +66,33 @@
                   <router-link to="/dash" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"> Dashboard</span></router-link>
                 </li>
                 <li>
-                  <router-link to="#routes" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-map"></i></span><span class="name"> Routes</span></router-link>
+                  <router-link to="/controls" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"> Navigation</span></router-link>
                 </li>
                 <li>
                   <router-link to="/settings" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"> Settings</span></router-link>
                 </li>
                 <li>
                   <router-link to="/debug" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"> Debug</span></router-link>
+                </li>
+              </ul>
+            </div>
+          </div>
+      </aside>
+      <aside class="sidebar is-fullheight is-hidden-tablet">
+          <div>
+            <div class="menu">
+              <ul class="menu-list">
+                <li>
+                  <router-link to="/dash" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"></span></router-link>
+                </li>
+                <li>
+                  <router-link to="/controls" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"></span></router-link>
+                </li>
+                <li>
+                  <router-link to="/settings" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"></span></router-link>
+                </li>
+                <li>
+                  <router-link to="/debug" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"></span></router-link>
                 </li>
               </ul>
             </div>
@@ -93,7 +117,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'home',
   computed: {
-    ...mapState([
+    ...mapState([      
       'wampStatus',
       'auvStatus',
       'auvData',
@@ -112,8 +136,12 @@ export default {
     this.$wamp.subscribe('rc_control.update', function(args) {
       this.$store.commit('UPDATE_RC_DATA', args[0])
     })
-    this.$store.dispatch('getUser')
-    this.$store.dispatch('getAuvs')
+    this.$wamp.subscribe('gps.update', function(args) {
+      this.$store.commit('UPDATE_GPS_DATA', args[0])
+    })
+
+    // this.$store.dispatch('getUser')
+    // this.$store.dispatch('getAuvs')
 
     this.$router.push('dash')
   },
@@ -138,7 +166,7 @@ export default {
   }
   .main {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 1fr 7fr;
   }
   .sidebar {
     display: block;
