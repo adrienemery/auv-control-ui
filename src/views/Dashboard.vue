@@ -2,11 +2,12 @@
     <div class='section'>
       <div class="buttons" style="margin-bottom: 20px">
         <button class="button is-info" @click="moveToWaypoint">Move To Waypoint</button>
-        <button class="button is-pulled-right" @click="showAsvMarker = !showAsvMarker">Toggle ASV</button>
+        <button class="button is-pulled-right" v-if="showAsvMarker" @click="showAsvMarker = !showAsvMarker">Hide ASV</button>
+        <button class="button is-pulled-right" v-else @click="showAsvMarker = !showAsvMarker">Show ASV</button>
         <button class="button is-pulled-right" @click="waypoint.lat = center.lat; waypoint.lng = center.lng">Center WP</button>
       </div>
       <div class="control">
-        <gmap-map ref="map" :center="center" :zoom="15" @dragend="updateMapCenter" style="width:100%;  height: 400px;">
+        <!-- <gmap-map ref="map" :center="center" :zoom="15" @dragend="updateMapCenter" style="width:100%;  height: 400px;">
           <gmap-marker 
             v-if="showAsvMarker"
             :position="currentPosition"
@@ -16,12 +17,18 @@
           <gmap-marker id='waypoint'
             :clickable="true"
             :draggable="true"
-            :label="'WP'"
+            :label="'WP'"            
             :position="waypoint"
             @dragend="updateWaypoint"
           ></gmap-marker>
           
-        </gmap-map>
+        </gmap-map> -->
+
+        <mgl-map :accessToken="accessToken" :mapStyle.sync="mapStyle" :center="coordinates" :zoom="14" style="width:100%;  height: 400px;">
+          <mgl-marker :coordinates="coordinates" :draggable="true" :label="'WP'" @dragend="updateMapCenter"></mgl-marker>
+          <mgl-navigation-control position="top-right"/>
+ 
+        </mgl-map>
 
         <hr>
 
@@ -49,10 +56,16 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState } from "vuex"
+import { MglMap, MglMarker, MglNavigationControl } from 'vue-mapbox'
 
 export default {
   name: "dashboard",
+  components: {
+    MglMap,
+    MglMarker,
+    MglNavigationControl
+  },
   computed: {
     ...mapState([
       'currentPosition',
@@ -61,6 +74,9 @@ export default {
   },
   data() {
     return {
+      accessToken: "pk.eyJ1IjoiYWRyaWVuZW1lcnkiLCJhIjoiY2pvZmF5N3hzMDJpNTNyanRmaDNobTNnYyJ9.g2Iyl72PnQnxQkwMuMvjOw",
+      mapStyle: "mapbox://styles/adrienemery/cjofb9nuk04t12rpchigj20gp",
+      coordinates: [  -123.1207, 49.2827 ],
       turnVal: 0,
       throttleVal: 0,
       center: { lat: 49.2827, lng: -123.1207 },
@@ -78,6 +94,7 @@ export default {
     console.log(this.auvData)
     this.turnLock = false
     this.throttleLock = false
+
   },
   watch: {
     turnVal(newVal, oldVal) {

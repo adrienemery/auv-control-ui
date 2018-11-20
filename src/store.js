@@ -19,6 +19,9 @@ export default new Vuex.Store({
     auvData: {},
     currentPosition: null,
     rcData: {armed: false},
+    heading: null,
+    roll: null,
+    pitch: null,
   },
   mutations: {
     SET_USER (state, data) {
@@ -42,6 +45,11 @@ export default new Vuex.Store({
       if (data.lat !== null) {
         state.currentPosition = {lat: data.lat, lng: data.lng}
       }
+    },
+    UPDATE_AHRS_DATA (state, data) {
+      state.heading = data.heading
+      state.roll = data.roll
+      state.pitch = data.pitch
     },
     SET_AUV_STATUS (state, status) {
       state.auvStatus = status

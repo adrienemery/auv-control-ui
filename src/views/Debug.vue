@@ -68,9 +68,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-if="auvData">
-                                <td></td>
-                                <td></td>
+                            <tr v-if="currentPosition">
+                                <td>{{currentPosition.lat}}</td>
+                                <td>{{currentPosition.lng}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -78,18 +78,16 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>X</th>
-                                <th>Y</th>
-                                <th>Z</th>
+                                <th>Roll</th>
+                                <th>Pith</th>
                                 <th>Heading</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-if="auvData">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{parseInt(roll)}}</td>
+                                <td>{{parseInt(pitch)}}</td>
+                                <td>{{parseInt(heading)}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -112,7 +110,11 @@ export default {
   name: "debug",
   computed: {
     ...mapState([
-      'auvData'
+      'auvData',
+      'roll',
+      'heading',
+      'pitch',
+      'currentPosition'
     ])
   },
   data() {

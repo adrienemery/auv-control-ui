@@ -15,18 +15,22 @@
                 <b-field label="PID Error Debounce">
                     <b-input type="number" size="is-large" placeholder="pid_debounce"></b-input>
                 </b-field>
+                <button class="button is-info" @click="setPidValues">Save</button>
             </div>
             <div class="column is-3">
                 <h1>Waypoints</h1>
                 <b-field label="Waypoint Distance">
                     <b-input type="number" size="is-large" placeholder="waypoint_distance"></b-input>
-                </b-field>
-                
+                </b-field>                
             </div>
-            
+            <div class="column is-3">
+                <h1>AHRS</h1>
+                <b-field label="Declination">
+                    <b-input v-model="declination" type="number" size="is-large" placeholder="declination"></b-input>
+                </b-field>                
+                <button class="button is-info" @click="setDeclination">Save</button>
+            </div>
         </div>
-        
-        <button class="button is-info" @click="setPidValues">Save</button>
     </div>
 
 </template>
@@ -51,6 +55,7 @@ export default {
       kI: 0,
       kD: 0,
       refreshRate: null,
+      declination: 0,
     };
   },
   methods: {
@@ -77,6 +82,17 @@ export default {
         }
       );
     },
+    setDeclination() {
+      this.$wamp.call("ahrs.set_declination", [this.declination]).then(
+        response => {
+          // none
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    }
+
   }
 };
 </script>
