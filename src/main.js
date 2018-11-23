@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import './plugins/vuetify'
 import App from './App.vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import router from './router'
@@ -9,15 +8,6 @@ import lodash from 'lodash'
 import VueWamp from 'vue-wamp'
 import Buefy from 'buefy'
 import 'buefy/lib/buefy.css'
-import VueMapbox from 'vue-mapbox'
-import Mapbox from 'mapbox-gl'
-import Vuetify from 'vuetify'
-
-Vue.use(Vuetify, {
-  iconfont: 'mdi' || 'fa' || 'fa4' // 'md' || 'mdi' || 'fa' || 'fa4'
-})
-
-Vue.use(VueMapbox, { mapboxgl: Mapbox })
 
 Vue.config.productionTip = false
 
@@ -26,13 +16,13 @@ Vue.use(Buefy, {defaultIconPack: 'fa'})
 
 console.log(process.env)
 
-// Vue.use(VueGoogleMaps, {
-//   load: {
-//     key: process.env.VUE_APP_MAPS_API_KEY,
-//     // libraries: "places" // necessary for places input
-//     autobindAllEvents: true,
-//   }
-// });
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: process.env.VUE_APP_MAPS_API_KEY,
+    // libraries: "places" // necessary for places input
+    autobindAllEvents: true,
+  }
+});
 
 
 // configure vue wamp
@@ -40,7 +30,8 @@ Vue.use(VueWamp, {
   debug: true,
   lazy_open: true,
   // url: process.env.VUE_APP_WAMP_URL,
-  url: 'ws://192.168.8.102:8080/ws',
+  // url: 'ws://192.168.8.102:8080/ws',
+  url: 'ws://localhost:8090/ws',
   realm: 'realm1',
   authmethods: ['ticket', 'anonymous'],
   authid: 'admin',

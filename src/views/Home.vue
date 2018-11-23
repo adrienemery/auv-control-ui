@@ -13,14 +13,19 @@
           <div class="navbar-item">
               <span><strong>AUV:</strong> {{ auvStatus }}</span>
           </div>
-          <div class="navbar-item">
-              <span v-if="rcData.armed"><strong>RC:</strong> On</span>
-              <span v-else><strong>RC:</strong> Off</span>
-          </div>
-          <div class="navbar-item">
-            <button class="button is-danger">Stop</button>
-          </div>
 
+          <div class="navbar-item">
+            <span v-if="navData && navData.enabled">Auto: <span class="tag is-success">On</span></span>  
+            <span v-else>Auto: <span class="tag is-danger">Off</span></span>
+          </div>
+          
+          <div class="navbar-item">
+            <span v-if="rcData.armed">RC: <span class="tag is-success">On</span></span>  
+            <span v-else>RC: <span class="tag is-danger">Off</span></span>
+          </div>
+          <div class="navbar-item">
+            <button class="button is-warning" @click="stop">Stop</button>
+          </div>
 
           <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
             <span></span>
@@ -58,7 +63,7 @@
     <div class="main">
 
       <!-- Sidebar -->
-      <aside class="sidebar hero is-fullheight is-hidden-mobile">
+      <aside class="sidebar hero is-fullheight is-hidden-mobile is-hidden-tablet-only">
           <div>
             <div class="menu">
               <ul class="menu-list">
@@ -78,7 +83,7 @@
             </div>
           </div>
       </aside>
-      <aside class="sidebar is-fullheight is-hidden-tablet">
+      <aside class="sidebar is-fullheight is-hidden-desktop">
           <div>
             <div class="menu">
               <ul class="menu-list">
@@ -121,6 +126,7 @@ export default {
       'wampStatus',
       'auvStatus',
       'auvData',
+      'navData',
       'rcData',
       'controlMode',
       'user'
@@ -139,17 +145,26 @@ export default {
     this.$wamp.subscribe('gps.update', function(args) {
       this.$store.commit('UPDATE_GPS_DATA', args[0])
     })
-
+    this.$wamp.subscribe('nav.update', function(args) {
+      this.$store.commit('UPDATE_NAV_DATA', args[0])
+    })
+    this.$wamp.subscribe('ahrs.update', function(args) {
+      this.$store.commit('UPDATE_AHRS_DATA', args[0])
+    })
+    
     // this.$store.dispatch('getUser')
     // this.$store.dispatch('getAuvs')
 
     this.$router.push('dash')
   },
   methods: {
-    logout: function () {
+    logout() {
       localStorage.removeItem('authToken')
       this.$router.push('/login')
       // TOOD refresh page after logout to ensure the vuex store is cleared
+    },
+    stop() {
+      this.$wamp.call('nav.stop')
     }
   }
 }
@@ -174,7 +189,7 @@ export default {
     border-right: 1px solid #dedede;
   }
   .sidebar-item {
-    margin: 1em;
+    margin: 0.1em;
     color: gray;
   }
   .sidebar-top-btn {

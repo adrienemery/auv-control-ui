@@ -13,15 +13,16 @@
                     <b-input type="number" step="0.01" size="is-large" v-model="kD" placeholder="kD"></b-input>
                 </b-field>
                 <b-field label="PID Error Debounce">
-                    <b-input type="number" size="is-large" placeholder="pid_debounce"></b-input>
+                    <b-input type="number" size="is-large" v-model="debounce" placeholder="pid_debounce"></b-input>
                 </b-field>
                 <button class="button is-info" @click="setPidValues">Save</button>
             </div>
             <div class="column is-3">
                 <h1>Waypoints</h1>
                 <b-field label="Waypoint Distance">
-                    <b-input type="number" size="is-large" placeholder="waypoint_distance"></b-input>
+                    <b-input v-model="waypointDistance" type="number" size="is-large" placeholder="waypoint_distance"></b-input>
                 </b-field>                
+                <button class="button is-info" @click="setWaypointDistance">Save</button>
             </div>
             <div class="column is-3">
                 <h1>AHRS</h1>
@@ -47,30 +48,56 @@ export default {
     ])
   },
   created () {
-    this.getPidValues()  
+    this.getPidValues() 
+    this.getWaypointDistance() 
+    this.getDeclination()
   },
   data() {
     return {
       kP: 1,
       kI: 0,
       kD: 0,
+      debounce: 0,
       refreshRate: null,
       declination: 0,
+      waypointDistance: 0,
     };
   },
   methods: {
+    getWaypointDistance() {
+      this.$wamp.call("nav.get_target_waypoint_distance").then(
+        response => {
+            console.log(response)
+            this.waypointDistance = response.target_waypoint_distance
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    },
+    setWaypointDistance() {
+      this.$wamp.call("nav.set_target_waypoint_distance", [this.waypointDistance]).then(
+        response => {
+            console.log(response)
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    },
     getPidValues() {
       this.$wamp.call("nav.get_pid_values").then(
         response => {
             console.log(response)
             this.kP = response.kP
             this.kI = response.kI
-            this.kD = response.kD
+            this.kD = response.kD,
+            this.debounce = response.debounce
         },
         error => {
           console.log(error);
         }
-      );
+      )
     },
     setPidValues() {
       this.$wamp.call("nav.set_pid_values", [this.kP, this.kI, this.kD]).then(
@@ -80,7 +107,17 @@ export default {
         error => {
           console.log(error);
         }
-      );
+      )
+    },
+    getDeclination() {
+      this.$wamp.call("ahrs.get_declination").then(
+        response => {
+          this.declination = response
+        },
+        error => {
+          console.log(error);
+        }
+      )
     },
     setDeclination() {
       this.$wamp.call("ahrs.set_declination", [this.declination]).then(
@@ -90,11 +127,10 @@ export default {
         error => {
           console.log(error);
         }
-      );
+      )
     }
-
   }
-};
+}
 </script>
 
 <style>

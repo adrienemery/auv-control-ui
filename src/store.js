@@ -17,11 +17,13 @@ export default new Vuex.Store({
     wampStatus: 'Disconnected',
     controlMode: 'Manual',
     auvData: {},
+    navData: {},
     currentPosition: null,
     rcData: {armed: false},
     heading: null,
     roll: null,
     pitch: null,
+    waypoint: null,
   },
   mutations: {
     SET_USER (state, data) {
@@ -41,6 +43,12 @@ export default new Vuex.Store({
       state.auvStatus = 'Connected'
       state.auvLastSeen = Date.now()
     },
+    UPDATE_NAV_DATA (state, data) {
+      state.navData = data
+      if (state.waypoint === null) {
+        state.waypoint = data.target_waypoint
+      }
+    },
     UPDATE_GPS_DATA (state, data) {
       if (data.lat !== null) {
         state.currentPosition = {lat: data.lat, lng: data.lng}
@@ -59,7 +67,10 @@ export default new Vuex.Store({
     },
     UPDATE_RC_DATA (state, data) {
       state.rcData = data
-    } 
+    }, 
+    UPDATE_WAYPOINT (state, data) {
+      state.waypoint = data
+    }
   },
   actions: {
     updateAuvData (context, data) {
@@ -97,6 +108,6 @@ export default new Vuex.Store({
         .catch(error => {
           console.log(error)
         })
-    }
+    },
   }
 })
