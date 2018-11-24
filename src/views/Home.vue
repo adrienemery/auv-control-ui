@@ -24,7 +24,7 @@
             <span v-else>RC: <span class="tag is-danger">Off</span></span>
           </div>
           <div class="navbar-item">
-            <button class="button is-warning" @click="stop">Stop</button>
+            <button class="button is-danger" @click="stop">Stop</button>
           </div>
 
           <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
@@ -74,10 +74,10 @@
                   <router-link to="/controls" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"> Navigation</span></router-link>
                 </li>
                 <li>
-                  <router-link to="/settings" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"> Settings</span></router-link>
+                  <router-link to="/debug" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"> Debug</span></router-link>
                 </li>
                 <li>
-                  <router-link to="/debug" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"> Debug</span></router-link>
+                  <router-link to="/settings" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"> Settings</span></router-link>
                 </li>
               </ul>
             </div>
@@ -94,10 +94,10 @@
                   <router-link to="/controls" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"></span></router-link>
                 </li>
                 <li>
-                  <router-link to="/settings" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"></span></router-link>
+                  <router-link to="/debug" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"></span></router-link>
                 </li>
                 <li>
-                  <router-link to="/debug" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"></span></router-link>
+                  <router-link to="/settings" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"></span></router-link>
                 </li>
               </ul>
             </div>
@@ -152,8 +152,8 @@ export default {
       this.$store.commit('UPDATE_AHRS_DATA', args[0])
     })
     
-    // this.$store.dispatch('getUser')
-    // this.$store.dispatch('getAuvs')
+    this.$store.dispatch('getUser')
+    this.$store.dispatch('getAuvs')
 
     this.$router.push('dash')
   },

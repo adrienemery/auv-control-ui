@@ -99,6 +99,8 @@
 
         </div>
 
+        {{navData}}
+
     </div>
 
 </template>
@@ -111,6 +113,7 @@ export default {
   computed: {
     ...mapState([
       'auvData',
+      'navData',
       'roll',
       'heading',
       'pitch',

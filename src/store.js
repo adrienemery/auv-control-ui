@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import axios from 'axios'
 
 Vue.use(Vuex)
+let PLOT_LENGTH = 40
 
 // setup axios to be accessible globally using "this.$http"
 Object.defineProperty(Vuex.Store.prototype, '$http', {value: axios})
@@ -24,6 +25,11 @@ export default new Vuex.Store({
     roll: null,
     pitch: null,
     waypoint: null,
+    plotHeadingData: [],
+    plotTargetHeadingData: [],
+    plotHeadingErrorData: [],
+    plotPidOutputData: [],
+    plotLabels: []
   },
   mutations: {
     SET_USER (state, data) {
@@ -47,6 +53,21 @@ export default new Vuex.Store({
       state.navData = data
       if (state.waypoint === null) {
         state.waypoint = data.target_waypoint
+      }
+      state.plotTargetHeadingData.push(data.target_heading)
+      state.plotHeadingData.push(state.heading)
+      state.plotHeadingErrorData.push(data.heading_error)
+      state.plotPidOutputData.push(data.pid_output)
+      state.plotLabels.push('')
+      
+      // if the plot data arrays get too long we remove
+      // the first elements to keep them at the proper length
+      if (state.plotHeadingData.length > PLOT_LENGTH) {
+        state.plotTargetHeadingData.shift()
+        state.plotHeadingData.shift()
+        state.plotPidOutputData.shift()
+        state.plotHeadingErrorData.shift()
+        state.plotLabels.shift()
       }
     },
     UPDATE_GPS_DATA (state, data) {

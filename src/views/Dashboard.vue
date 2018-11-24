@@ -1,16 +1,16 @@
 <template>
-  <div class='section'>
+  <div class="section">
     
     <!-- Top Buttons -->
-    <div class="buttons" style="margin-bottom: 20px">
+    <div class="buttons" style="margin-bottom: 20px; margin-top: 5px">
       <button class="button is-info" @click="moveToWaypoint">Move To Waypoint</button>
       <button class="button is-pulled-right" v-if="showAsvMarker" @click="showAsvMarker = !showAsvMarker">Hide ASV</button>
       <button class="button is-pulled-right" v-else @click="showAsvMarker = !showAsvMarker">Show ASV</button>
-      <button class="button is-pulled-right" @click="waypoint.lat = center.lat; waypoint.lng = center.lng">Center WP</button>
+      <button class="button is-pulled-right" @click="centerWaypoint">Center WP</button>
     </div>
 
     <div class="columns">
-      <div class="column">
+      <div class="column is-half">
         <!-- Map -->
         <gmap-map ref="map" :center="center" :zoom="15" @dragend="updateMapCenter" style="height: 300px; min-width:300px;">
           <gmap-marker 
@@ -30,34 +30,40 @@
         <!-- End map -->
       </div>
 
-      <div class="column chart">
+      <div class="column chart is-half">
         <line-chart :chart-data="plotData" :options="plotOptions" :height="300"/>
       </div>
-      
+
     </div>
 
-    <hr>
+    <div class="columns">
+      <div class="column chart is-half">
+        <line-chart :chart-data="pidPlotData" :options="pidPlotOptions" :height="300"/>
+      </div>
+      <div class="column">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Left Motor</th>
+              <th>Right Motor</th>
+              <th>Throttle</th>
+              <th>Turn Speed</th>
+              <th>Trim</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="auvData">
+              <td>{{auvData.left_motor_speed}}</td>
+              <td>{{auvData.right_motor_speed}}</td>
+              <td>{{auvData.throttle}}</td>
+              <td>{{parseInt(auvData.turn_speed)}}</td>
+              <td>{{auvData.trim}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-    {{navData}}
-
-    <!-- <div class="columns">
-        <div class="column">
-            <p>Throttle: {{auvData.throttle}} %
-                <button class="button is-info is-pulled-right" @click="throttleVal = 0">Zero</button>
-            </p>
-            <div class="slidecontainer">
-                <input type="range" min="-100" max="100" value="50" class="slider" id="myRange" v-model="throttleVal">
-            </div>
-        </div>
-        <div class="column">
-            <p>Turn: {{auvData.turn_speed}} %
-                <button class="button is-info is-pulled-right" @click="turnVal = 0">Zero</button>
-            </p>
-            <div class="slidecontainer">
-                <input type="range" min="-100" max="100" value="50" class="slider" id="myRange" v-model="turnVal">
-            </div>
-        </div>
-    </div> -->
   </div>
 </template>
 
@@ -75,7 +81,13 @@ export default {
       'currentPosition',
       'auvData',
       'navData',
+      'plotLabels',
+      'plotHeadingData',
+      'plotHeadingData',
       'waypoint',
+      'plotTargetHeadingData',
+      'plotHeadingErrorData',
+      'plotPidOutputData',
       'heading',
     ]),
   },
@@ -87,10 +99,24 @@ export default {
       turnLock: false,
       throttleLock: false,
       showAsvMarker: true,
-      targetHeadingData: [],
-      headingData: [],
-      plotLabels: [],
       plotData: null,
+      pidPlotData: null,
+      pidPlotOptions: {
+        animation: false,
+        responsive: true,
+        maintainAspectRatio: false,
+        backgroundColor: 'black',
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              min: -100,
+              stepSize: 20,
+              max: 100
+            }
+          }],
+        }
+      },
       plotOptions: {
         animation: false,
         responsive: true,
@@ -114,7 +140,6 @@ export default {
     this.turnLock = false
     this.turnVal = this.auvData.turn_speed
     this.throttleVal = this.auvData.throttle
-    console.log(this.auvData)
     this.turnLock = false
     this.throttleLock = false
     if (this.currentPosition) {
@@ -123,19 +148,6 @@ export default {
   },
   watch: {
     navData(newData, oldData) {
-      let plotLength = 50
-      this.targetHeadingData.push(newData.target_heading)
-      this.headingData.push(this.heading)
-      this.plotLabels.push('')
-      if (this.targetHeadingData.length > plotLength) {
-        this.targetHeadingData.shift()
-      }
-      if (this.headingData.length > plotLength) {
-        this.headingData.shift()
-      }
-      if (this.plotLabels.length > plotLength) {
-        this.plotLabels.shift()
-      }
       this.plotData = {
         labels: this.plotLabels,
         backgroundColor: 'black',
@@ -144,14 +156,35 @@ export default {
             fill: false,
             label: 'Target Heading',
             borderColor: 'blue',
-            data: this.targetHeadingData,
+            data: this.plotTargetHeadingData,
             pointRadius: 0,
           },
           { 
             fill: false,
             label: 'Heading',
             borderColor: 'green',
-            data: this.headingData,
+            data: this.plotHeadingData,
+            pointRadius: 0,
+          },
+          
+        ]
+      }
+      this.pidPlotData = {
+        labels: this.plotLabels,
+        backgroundColor: 'black',
+        datasets: [
+          { 
+            fill: false,
+            label: 'PID Error',
+            borderColor: 'red',
+            data: this.plotHeadingErrorData,
+            pointRadius: 0,
+          },
+          { 
+            fill: false,
+            label: 'PID Output',
+            borderColor: 'green',
+            data: this.plotPidOutputData,
             pointRadius: 0,
           },
           
@@ -185,6 +218,9 @@ export default {
     }
   },
   methods: {
+    centerWaypoint() {
+      this.$store.commit('UPDATE_WAYPOINT', this.center)
+    },
     updateMapCenter() {
       this.center.lat = this.$refs.map.$mapObject.center.lat()
       this.center.lng = this.$refs.map.$mapObject.center.lng()

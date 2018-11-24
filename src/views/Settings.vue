@@ -3,7 +3,7 @@
         <div class="columns">
             <!-- Left Hand Side -->
             <div class="column">
-                <div class="section">
+                <div class="section" v-if="activeAuv">
                     <h3>Remote ASV Config</h3>
                     <p>These settings define the AUV in the master database</p>
                     <b-field label="Name">

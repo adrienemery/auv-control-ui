@@ -13,7 +13,7 @@
                     <b-input type="number" step="0.01" size="is-large" v-model="kD" placeholder="kD"></b-input>
                 </b-field>
                 <b-field label="PID Error Debounce">
-                    <b-input type="number" size="is-large" v-model="debounce" placeholder="pid_debounce"></b-input>
+                    <b-input type="number" size="is-large" v-model="debounce" placeholder="PID Debounce"></b-input>
                 </b-field>
                 <button class="button is-info" @click="setPidValues">Save</button>
             </div>
@@ -100,7 +100,7 @@ export default {
       )
     },
     setPidValues() {
-      this.$wamp.call("nav.set_pid_values", [this.kP, this.kI, this.kD]).then(
+      this.$wamp.call("nav.set_pid_values", [this.kP, this.kI, this.kD, this.debounce]).then(
         response => {
             this.getPidValues()
         },
