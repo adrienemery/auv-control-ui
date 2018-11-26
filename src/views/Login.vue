@@ -16,10 +16,8 @@
 
               <b-field :type="passwordType" :message="passwordErrorMsg">
                 <b-input type="password" size="is-large" v-model="password" placeholder="password">
-              </b-input>
-        </b-field>
-
-              <!-- <button class="button is-block is-info is-large is-fullwidth" @click="login">Login</button> -->
+                </b-input>
+              </b-field>
               <a class="button is-block login-btn is-large is-fullwidth" @click="login">Login</a>
             </form>
           </div>
@@ -67,8 +65,7 @@ export default {
         }
       })
         .then( (response) => {
-          console.info(response)
-          if (response) {
+          if (response.status === 200) {
             vm.$store.commit('SET_USER', response.data.user)
             let token = response.data.token
             localStorage.setItem('authToken', token)

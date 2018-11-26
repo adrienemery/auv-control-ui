@@ -103,7 +103,7 @@ export default new Vuex.Store({
       }, 6000)
     },
     getUser (context) {
-      this.$http.get('api/users/me')
+      this.$http.get('api/users/me/')
         .then(response => {
           context.commit('SET_USER', response.data)
         })
@@ -112,7 +112,7 @@ export default new Vuex.Store({
         })
     },
     getAuvs (context) {
-      this.$http.get('api/auvs')
+      this.$http.get('api/auvs/')
         .then(response => {
           context.commit('SET_AUVS', response.data)
         })

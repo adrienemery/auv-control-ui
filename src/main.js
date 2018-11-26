@@ -99,7 +99,7 @@ function isAuthorized () {
 router.beforeEach((to, from, next) => {
   if (to.name !== 'login' && isAuthorized() === false) {
     next('/login')
-  } else {
+  } else {  
     console.log(to)
     next()
   }
