@@ -29,6 +29,9 @@
                 <b-field label="Declination">
                     <b-input v-model="declination" type="number" size="is-large" placeholder="declination"></b-input>
                 </b-field>                
+                <b-field label="Board Offset">
+                    <b-input v-model="offset" type="number" size="is-large" placeholder="offset"></b-input>
+                </b-field>                
                 <button class="button is-info" @click="setDeclination">Save</button>
             </div>
         </div>
@@ -51,6 +54,7 @@ export default {
     this.getPidValues() 
     this.getWaypointDistance() 
     this.getDeclination()
+    this.getBoardOffset()
   },
   data() {
     return {
@@ -60,6 +64,7 @@ export default {
       debounce: 0,
       refreshRate: null,
       declination: 0,
+      offset: 0,
       waypointDistance: 0,
     };
   },
@@ -120,15 +125,19 @@ export default {
       )
     },
     setDeclination() {
-      this.$wamp.call("ahrs.set_declination", [this.declination]).then(
+      this.$wamp.call("ahrs.set_declination", [this.declination])
+      this.$wamp.call("ahrs.set_board_offset", [this.offset])
+    },
+    getBoardOffset() {
+      this.$wamp.call("ahrs.get_board_offset").then(
         response => {
-          // none
+          this.offset  = response
         },
         error => {
           console.log(error);
         }
       )
-    }
+    },
   }
 }
 </script>

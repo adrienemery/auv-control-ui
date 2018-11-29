@@ -19,19 +19,15 @@ console.log(process.env)
 Vue.use(VueGoogleMaps, {
   load: {
     key: process.env.VUE_APP_MAPS_API_KEY,
-    // libraries: "places" // necessary for places input
     autobindAllEvents: true,
   }
 });
-
 
 // configure vue wamp
 Vue.use(VueWamp, {
   debug: true,
   lazy_open: true,
   url: process.env.VUE_APP_WAMP_URL,
-  // url: 'ws://192.168.8.101:8080/ws',
-  // url: 'ws://localhost:8090/ws',
   realm: 'realm1',
   authmethods: ['ticket', 'anonymous'],
   authid: 'admin',

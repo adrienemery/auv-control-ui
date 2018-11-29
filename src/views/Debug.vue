@@ -31,6 +31,25 @@
                 </div>
             </div>
 
+            <div class="columns">
+                <div class="column">
+                    <p>Throttle: {{throttle}} %
+                        <button class="button is-info is-pulled-right" @click="throttle = 0">Zero</button>
+                    </p>
+                    <div class="slidecontainer">
+                        <input type="range" min="-100" max="100" value="0" class="slider" id="myRange" v-model="throttle">
+                    </div>
+                </div>
+                <div class="column">
+                    <p>Turn Speed: {{turnSpeed}} %
+                        <button class="button is-info is-pulled-right" @click="turnSpeed = 0">Zero</button>
+                    </p>
+                    <div class="slidecontainer">
+                        <input type="range" min="-100" max="100" value="0" class="slider" id="myRange" v-model="turnSpeed">
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="section">
@@ -124,6 +143,8 @@ export default {
     return {
       leftMotorSpeed: 0,
       rightMotorSpeed: 0,
+      throttle: 0,
+      turnSpeed: 0,
       trim: 0,
       mode: "individual"
     };
@@ -138,6 +159,12 @@ export default {
     trim(newVal, oldVal) {
       this.setTrim(newVal);
     },
+    turnSpeed(newVal, oldVal) {
+      this.setTurnSpeed(newVal)
+    },
+    throttle(newVal, oldVal) {
+      this.setThrottle(newVal)
+    }
   },
   methods: {
     setLeftMotor(speed) {
@@ -162,6 +189,12 @@ export default {
     },
     setTrim(trim) {
       this.$wamp.call("auv.set_trim", [trim]);
+    },
+    setTurnSpeed(speed) {
+      this.$wamp.call("auv.set_turn_val", [speed]);
+    },
+    setThrottle(throttle) {
+      this.$wamp.call("auv.set_throttle", [throttle]);
     },
   }
 };

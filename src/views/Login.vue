@@ -70,7 +70,6 @@ export default {
             let token = response.data.token
             localStorage.setItem('authToken', token)
             this.$wamp.open()
-            vm.$http.defaults.headers.common['Authorization'] = 'Token ' + token
             vm.$router.push('dash')
           } else {
             vm.passwordType = 'is-danger'

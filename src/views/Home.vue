@@ -1,17 +1,20 @@
 <template>
   <div>
     <!-- Navbar -->
-    <nav class="navbar has-shadow">
+    <nav class="navbar has-shadow is-fixed-top">
         <!-- Icon -->
         <div class="navbar-brand">
-          <a class="navbar-item" href="../">
-            <img src="../assets/submarine-100.png" alt="AUV Control"><span></span> 
-          </a>
           <div class="navbar-item">
-              <span><strong>WAMP:</strong> {{ wampStatus }}</span>
+              <span>WAMP: 
+                <span v-if="wampStatus === 'Connected'" class="tag is-success">On</span>
+                <span v-else class="tag is-danger">Off</span>
+              </span>  
           </div>
           <div class="navbar-item">
-              <span><strong>AUV:</strong> {{ auvStatus }}</span>
+              <span>AUV: 
+                <span v-if="auvStatus === 'Connected'" class="tag is-success">On</span>
+                <span v-else class="tag is-danger">Off</span>
+              </span>  
           </div>
 
           <div class="navbar-item">
@@ -60,57 +63,57 @@
     </nav>
     <!-- End Navbar -->
 
-    <div class="main">
-
-      <!-- Sidebar -->
-      <aside class="sidebar hero is-fullheight is-hidden-mobile is-hidden-tablet-only">
-          <div>
-            <div class="menu">
-              <ul class="menu-list">
-                <li>
-                  <router-link to="/dash" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"> Dashboard</span></router-link>
-                </li>
-                <li>
-                  <router-link to="/controls" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"> Navigation</span></router-link>
-                </li>
-                <li>
-                  <router-link to="/debug" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"> Debug</span></router-link>
-                </li>
-                <li>
-                  <router-link to="/settings" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"> Settings</span></router-link>
-                </li>
-              </ul>
-            </div>
-          </div>
-      </aside>
-      <aside class="sidebar is-fullheight is-hidden-desktop">
-          <div>
-            <div class="menu">
-              <ul class="menu-list">
-                <li>
-                  <router-link to="/dash" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"></span></router-link>
-                </li>
-                <li>
-                  <router-link to="/controls" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"></span></router-link>
-                </li>
-                <li>
-                  <router-link to="/debug" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"></span></router-link>
-                </li>
-                <li>
-                  <router-link to="/settings" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"></span></router-link>
-                </li>
-              </ul>
-            </div>
-          </div>
-      </aside>
-      <!-- End Sidebar -->
-
-      <!-- Content Right Hand Side -->
-      <div class="content" style="overflow:scroll; height:100%;">
-        <router-view></router-view>
+    <!-- Sidebar -->
+    <aside class="sidebar hero is-fullheight is-hidden-mobile is-hidden-tablet-only">        
+        <div class="menu">
+          <ul class="menu-list">
+            <li>
+              <router-link to="/dash" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"> Dashboard</span></router-link>
+            </li>
+            <li>
+              <router-link to="/controls" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"> Navigation</span></router-link>
+            </li>
+            <li>
+              <router-link to="/debug" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"> Debug</span></router-link>
+            </li>
+            <li>
+              <router-link to="/settings" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"> Settings</span></router-link>
+            </li>
+          </ul>
       </div>
-      <!-- End Content -->
+    </aside>
 
+    <aside class="sidebar-collapsed hero is-fullheight is-hidden-desktop">
+        <div>
+          <div class="menu">
+            <ul class="menu-list">
+              <li>
+                <router-link to="/dash" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"></span></router-link>
+              </li>
+              <li>
+                <router-link to="/controls" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"></span></router-link>
+              </li>
+              <li>
+                <router-link to="/debug" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"></span></router-link>
+              </li>
+              <li>
+                <router-link to="/settings" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"></span></router-link>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </aside>
+    <!-- End Sidebar -->
+
+    <div class="main is-hidden-mobile is-hidden-tablet-only">
+      <!-- Content Right Hand Side -->
+        <router-view></router-view>
+      <!-- End Content -->
+    </div>
+    <div class="main-collapsed is-hidden-desktop">
+      <!-- Content Right Hand Side -->
+        <router-view></router-view>
+      <!-- End Content -->
     </div>
   </div>
 
@@ -180,13 +183,30 @@ export default {
     background-color: #fff;
   }
   .main {
-    display: grid;
-    grid-template-columns: 1fr 7fr;
+    margin-left: 150px;
+    overflow: scroll;
+  }
+  .main-collapsed {
+    margin-left: 50px;
+    overflow: scroll;
   }
   .sidebar {
+    width: 150px;
     display: block;
     background-color: #F9F9F9;
     border-right: 1px solid #dedede;
+    position: fixed;
+    top: 50px;
+    z-index: 1;
+  }
+  .sidebar-collapsed {
+    width: 50px;    
+    display: block;
+    background-color: #F9F9F9;
+    border-right: 1px solid #dedede;
+    position: fixed;
+    top: 30;
+    z-index: 1;
   }
   .sidebar-item {
     margin: 0.1em;

@@ -4,42 +4,24 @@
     <!-- Top Buttons -->
     <div class="buttons" style="margin-bottom: 20px; margin-top: 5px">
       <button class="button is-info" @click="moveToWaypoint">Move To Waypoint</button>
-      <button class="button is-pulled-right" v-if="showAsvMarker" @click="showAsvMarker = !showAsvMarker">Hide ASV</button>
-      <button class="button is-pulled-right" v-else @click="showAsvMarker = !showAsvMarker">Show ASV</button>
       <button class="button is-pulled-right" @click="centerWaypoint">Center WP</button>
     </div>
 
     <div class="columns">
       <div class="column is-half">
         <!-- Map -->
-        <gmap-map ref="map" :center="center" :zoom="15" @dragend="updateMapCenter" style="height: 300px; min-width:300px;">
-          <gmap-marker 
-            v-if="showAsvMarker"
-            :position="currentPosition"
-            :label="'asv'"
-            :clickable="true"
-          ></gmap-marker>
-          <gmap-marker id='waypoint'
-            :clickable="true"
-            :draggable="true"
-            :label="'WP'"            
-            :position="waypoint"
-            @dragend="updateWaypoint"
-          ></gmap-marker>
-        </gmap-map>
-        <!-- End map -->
+        <div ref="map" id="map"></div>
       </div>
 
       <div class="column chart is-half">
-        <line-chart :chart-data="plotData" :options="plotOptions" :height="300"/>
+        <!-- Chart -->
+        <line-chart :chart-data="plotData" :options="plotOptions" :height="200"/>
+        <line-chart :chart-data="pidPlotData" :options="pidPlotOptions" :height="200"/>
       </div>
 
     </div>
 
     <div class="columns">
-      <div class="column chart is-half">
-        <line-chart :chart-data="pidPlotData" :options="pidPlotOptions" :height="300"/>
-      </div>
       <div class="column">
         <table class="table">
           <thead>
@@ -90,14 +72,13 @@ export default {
       'plotPidOutputData',
       'heading',
     ]),
+    asvPosition() {
+      return this.currentPosition
+    }
   },
   data() {
     return {
-      turnVal: 0,
-      throttleVal: 0,
       center: { lat: 49.2827, lng: -123.1207 },
-      turnLock: false,
-      throttleLock: false,
       showAsvMarker: true,
       plotData: null,
       pidPlotData: null,
@@ -111,7 +92,7 @@ export default {
             ticks: {
               beginAtZero: true,
               min: -100,
-              stepSize: 20,
+              stepSize: 25,
               max: 100
             }
           }],
@@ -136,17 +117,31 @@ export default {
     }
   },
   created () {
-    this.throttleLock = true
-    this.turnLock = false
-    this.turnVal = this.auvData.turn_speed
-    this.throttleVal = this.auvData.throttle
-    this.turnLock = false
-    this.throttleLock = false
     if (this.currentPosition) {
       this.center = this.currentPosition
     }
   },
+  mounted () {
+    this.initMap()
+  },
   watch: {
+    currentPosition (newVal, oldVal) {
+      // set the map center to the ASV position the first time data comes throught
+      if (oldVal === null) {
+        this.map.setCenter(newVal)
+      }
+    },
+    heading (newVal, oldVal) {
+      this.asvMarker.icon.rotation = newVal
+      this.asvMarker.setIcon({
+        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        scale: 3,
+        rotation: newVal
+      })
+    },
+    asvPosition (newVal, oldVal) {
+      this.asvMarker.setPosition(newVal)
+    },
     navData(newData, oldData) {
       this.plotData = {
         labels: this.plotLabels,
@@ -191,73 +186,65 @@ export default {
         ]
       }
     },
-    currentPosition(newVal, oldVal) {
-      if (oldVal === null) {
-        this.center = newVal
-      }
-    },
-    turnVal(newVal, oldVal) {
-      if (!this.throttleLock && newVal !== null) {
-        if (newVal > 0) {
-          this.turnRight(newVal);
-        } else if (newVal < 0) {
-          this.turnLeft(newVal);
-        } else {
-          this.moveCenter();
-        }
-      }
-    },
-    throttleVal(newVal, oldVal) {
-      if (!this.throttleLock && newVal !== null) {
-        if (newVal >= 0) {
-          this.moveForward(newVal);
-        } else {
-          this.moveReverse(newVal);
-        }
-      }
-    }
   },
   methods: {
+    initMap() {
+      this.map = new google.maps.Map(this.$refs.map, {zoom: 15, center: this.center})
+      this.asvMarker = new google.maps.Marker({
+          position: this.currentPosition, 
+          map: this.map,           
+          icon: {
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            scale: 3,
+            rotation: this.heading
+          },
+      })
+      this.waypointMarker = new google.maps.Marker({
+          position: this.waypoint, 
+          draggable: true,
+          map: this.map, 
+          label: 'WP'
+      })
+      let vm = this
+      this.waypointMarker.addListener('dragend', function() {
+        vm.updateWaypoint(vm.waypointMarker.getPosition())
+      })
+    },
     centerWaypoint() {
+      this.updateMapCenter()
+      this.waypointMarker.setPosition(this.center)
       this.$store.commit('UPDATE_WAYPOINT', this.center)
     },
     updateMapCenter() {
-      this.center.lat = this.$refs.map.$mapObject.center.lat()
-      this.center.lng = this.$refs.map.$mapObject.center.lng()
+      let center = this.map.getCenter()
+      this.center.lat = center.lat()
+      this.center.lng = center.lng()
     },
-    updateWaypoint(event) {
+    updateWaypoint(position) {
       this.$store.commit('UPDATE_WAYPOINT', {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng()
+        lat: position.lat(),
+        lng: position.lng()
       })
     },
     moveToWaypoint() {
       this.$wamp.call("nav.move_to_waypoint", [this.waypoint])
     },
-    turnRight(speed) {
-      this.$wamp.call("auv.move_right", [speed]);
-    },
-    turnLeft(speed) {
-      this.$wamp.call("auv.move_left", [speed]);
-    },
-    moveCenter() {
-      this.$wamp.call("auv.move_center", []);
-    },
-    moveForward(speed) {
-      if (speed !== undefined) {
-        this.$wamp.call("auv.forward_throttle", [speed]);
-      }
-    },
-    moveReverse(speed) {
-      if (speed !== undefined) {
-        this.$wamp.call("auv.reverse_throttle", [speed]);
-      }
-    }
   }
 };
 </script>
 
 <style>
+  #map {
+    width: 100%;
+    height: 400px; 
+    min-width:300px;
+    background-color: grey;
+  }
+
+  .template {
+    padding-top: 20px;
+  }
+
   .chart {
     max-width: 100%;
   }
@@ -268,5 +255,8 @@ export default {
     line-height: 10px;
     text-align: center;
     white-space: nowrap;
+  }
+  .section {
+    width: 100%;
   }
 </style>
