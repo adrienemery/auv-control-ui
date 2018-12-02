@@ -25,6 +25,7 @@ export default new Vuex.Store({
     roll: null,
     pitch: null,
     waypoint: null,
+    trip: [],
     plotHeadingData: [],
     plotTargetHeadingData: [],
     plotHeadingErrorData: [],
@@ -51,9 +52,7 @@ export default new Vuex.Store({
     },
     UPDATE_NAV_DATA (state, data) {
       state.navData = data
-      if (state.waypoint === null) {
-        state.waypoint = data.target_waypoint
-      }
+      state.waypoint = data.target_waypoint
       state.plotTargetHeadingData.push(data.target_heading)
       state.plotHeadingData.push(state.heading)
       state.plotHeadingErrorData.push(data.heading_error)
@@ -91,6 +90,12 @@ export default new Vuex.Store({
     }, 
     UPDATE_WAYPOINT (state, data) {
       state.waypoint = data
+    },
+    ADD_WAYPOINT (state, waypoint) {
+      state.trip.push(waypoint)
+    },
+    REMOVE_WAYPOINT (state, data) {
+      state.trip.pop()
     }
   },
   actions: {

@@ -3,8 +3,10 @@
     
     <!-- Top Buttons -->
     <div class="buttons" style="margin-bottom: 20px; margin-top: 5px">
-      <button class="button is-info" @click="moveToWaypoint">Move To Waypoint</button>
-      <button class="button is-pulled-right" @click="centerWaypoint">Center WP</button>
+      <button class="button is-info" @click="startTrip">Start Trip</button>
+      <button class="button">Pause Trip</button>
+      <button class="button is-success is-pulled-right" @click="addWaypoint">+WP</button>
+      <button class="button is-danger is-pulled-right" @click="removeWaypoint">-WP</button>
     </div>
 
     <div class="columns">
@@ -15,13 +17,14 @@
 
       <div class="column chart is-half">
         <!-- Chart -->
-        <line-chart :chart-data="plotData" :options="plotOptions" :height="200"/>
-        <line-chart :chart-data="pidPlotData" :options="pidPlotOptions" :height="200"/>
+        <line-chart :chart-data="plotData" :options="plotOptions" :height="200"/>        
       </div>
-
     </div>
 
     <div class="columns">
+      <div class="column">
+        <line-chart :chart-data="pidPlotData" :options="pidPlotOptions" :height="200"/>
+      </div>
       <div class="column">
         <table class="table">
           <thead>
@@ -46,6 +49,8 @@
       </div>
     </div>
 
+    {{waypoint}}
+
   </div>
 </template>
 
@@ -67,6 +72,7 @@ export default {
       'plotHeadingData',
       'plotHeadingData',
       'waypoint',
+      'trip',
       'plotTargetHeadingData',
       'plotHeadingErrorData',
       'plotPidOutputData',
@@ -80,6 +86,9 @@ export default {
     return {
       center: { lat: 49.2827, lng: -123.1207 },
       showAsvMarker: true,
+      showMarkerCircles: true,
+      tripMarkers: [],
+      tripCircles: [],
       plotData: null,
       pidPlotData: null,
       pidPlotOptions: {
@@ -116,7 +125,8 @@ export default {
       },
     }
   },
-  created () {
+  created () {  
+    this.getUserLocation()  
     if (this.currentPosition) {
       this.center = this.currentPosition
     }
@@ -125,6 +135,9 @@ export default {
     this.initMap()
   },
   watch: {
+    trip (newVal, oldVal) {
+      this.updateTrip()
+    },
     currentPosition (newVal, oldVal) {
       // set the map center to the ASV position the first time data comes throught
       if (oldVal === null) {
@@ -188,47 +201,98 @@ export default {
     },
   },
   methods: {
+    getUserLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          console.log(position)
+        })
+      } else {
+        console.log("Geolocation is not supported by this browser")
+      }
+    },
     initMap() {
-      this.map = new google.maps.Map(this.$refs.map, {zoom: 15, center: this.center})
-      this.asvMarker = new google.maps.Marker({
-          position: this.currentPosition, 
-          map: this.map,           
-          icon: {
-            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-            scale: 3,
-            rotation: this.heading
-          },
+      this.map = new google.maps.Map(this.$refs.map, {
+        zoom: 17, 
+        center: this.center,
+        disableDefaultUI: true,
+        zoomControl: true,
       })
-      this.waypointMarker = new google.maps.Marker({
-          position: this.waypoint, 
+      
+      let vm = this
+      this.map.addListener('center_changed', function() {
+        vm.updateMapCenter()
+      });
+
+      this.asvMarker = new google.maps.Marker({
+        position: this.currentPosition, 
+        map: this.map,           
+        icon: {
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+          scale: 3,
+          rotation: this.heading
+        },
+      })
+      this.updateTrip()
+    },
+    updateTrip() {
+      for (var i = 0; i < this.tripMarkers.length; i++) {
+        this.tripMarkers[i].setMap(null)
+      }
+      this.tripMarkers = []
+      for (var i = 0; i < this.tripCircles.length; i++) {
+        this.tripCircles[i].setMap(null)
+      }
+      this.tripCircles = []
+      
+      for (let i=0; i<this.trip.length; i++) {
+        let waypoint = this.trip[i]
+        let marker = new google.maps.Marker({
+          position: waypoint, 
           draggable: true,
           map: this.map, 
-          label: 'WP'
-      })
-      let vm = this
-      this.waypointMarker.addListener('dragend', function() {
-        vm.updateWaypoint(vm.waypointMarker.getPosition())
-      })
+          label: (i + 1).toString()
+        })
+        var circle = new google.maps.Circle({
+          strokeColor: '#FF0000',
+          strokeOpacity: 0.8,
+          strokeWeight: 1,
+          fillColor: '#FF0000',
+          fillOpacity: 0.35,
+          map: this.map,
+          center: waypoint,
+          radius: 10
+        })
+        this.tripCircles.push(circle)
+        this.tripMarkers.push(marker)
+        let vm = this
+        marker.addListener('dragend', function() {
+          vm.updateTripMarker(i)
+        })  
+      }
     },
-    centerWaypoint() {
-      this.updateMapCenter()
-      this.waypointMarker.setPosition(this.center)
-      this.$store.commit('UPDATE_WAYPOINT', this.center)
+    updateTripMarker(index) {
+      this.trip[index] = this.tripMarkers[index].getPosition()
+      this.tripCircles[index].setCenter(this.tripMarkers[index].getPosition())
+    },
+    addWaypoint() {
+      // add a waypoint to the trip
+      this.$store.commit('ADD_WAYPOINT', this.map.getCenter())
+    },
+    removeWaypoint() {
+      // remove the most recetn waypoint to the trip
+      this.$store.commit('REMOVE_WAYPOINT')
     },
     updateMapCenter() {
       let center = this.map.getCenter()
       this.center.lat = center.lat()
       this.center.lng = center.lng()
     },
-    updateWaypoint(position) {
-      this.$store.commit('UPDATE_WAYPOINT', {
-        lat: position.lat(),
-        lng: position.lng()
-      })
-    },
     moveToWaypoint() {
       this.$wamp.call("nav.move_to_waypoint", [this.waypoint])
     },
+    startTrip() {
+      this.$wamp.call("nav.start_trip", [this.trip])
+    }
   }
 };
 </script>
@@ -236,7 +300,7 @@ export default {
 <style>
   #map {
     width: 100%;
-    height: 400px; 
+    height: 200px; 
     min-width:300px;
     background-color: grey;
   }
