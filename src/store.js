@@ -91,11 +91,23 @@ export default new Vuex.Store({
     UPDATE_WAYPOINT (state, data) {
       state.waypoint = data
     },
+    CLEAR_TRIP (state, data) {
+      state.trip = []
+    },
     ADD_WAYPOINT (state, waypoint) {
       state.trip.push(waypoint)
     },
     REMOVE_WAYPOINT (state, data) {
       state.trip.pop()
+    }
+  },
+  getters: {
+    numCompletedWaypoints (state) {
+      if (state.navData.completed_waypoints) {
+        return state.navData.completed_waypoints.length
+      } else {
+        return 0
+      }
     }
   },
   actions: {

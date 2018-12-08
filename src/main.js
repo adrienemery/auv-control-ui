@@ -28,6 +28,7 @@ Vue.use(VueWamp, {
   debug: true,
   lazy_open: true,
   url: process.env.VUE_APP_WAMP_URL,
+  // url: 'ws://192.168.8.101:8080/ws',
   realm: 'realm1',
   authmethods: ['ticket', 'anonymous'],
   authid: 'admin',

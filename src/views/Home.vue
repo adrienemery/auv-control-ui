@@ -30,11 +30,19 @@
             <button class="button is-danger" @click="stop">Stop</button>
           </div>
 
-          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu" @click="showNav = !showNav" :class="{ 'is-active': showNav }">
             <span></span>
             <span></span>
             <span></span>
           </a>
+        </div>
+
+        <div class="navbar-menu" :class="{ 'is-active': showNav }">
+          <div class="navbar-end">
+            <a class="navbar-item" @click="logout">
+              Logout
+            </a>
+          </div>
         </div>
 
         <div id="navMenu" class="navbar-menu">
@@ -134,6 +142,11 @@ export default {
       'controlMode',
       'user'
     ])
+  },
+  data() {
+    return {
+      showNav: false,
+    }
   },
   created () {
 

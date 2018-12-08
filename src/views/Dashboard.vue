@@ -3,10 +3,12 @@
     
     <!-- Top Buttons -->
     <div class="buttons" style="margin-bottom: 20px; margin-top: 5px">
-      <button class="button is-info" @click="startTrip">Start Trip</button>
-      <button class="button">Pause Trip</button>
+      <button class="button is-info" @click="startTrip">Start</button>
+      <button class="button" @click='stop'>Pause</button>
+      <button class="button" @click='resumeTrip'>Resume</button>
       <button class="button is-success is-pulled-right" @click="addWaypoint">+WP</button>
       <button class="button is-danger is-pulled-right" @click="removeWaypoint">-WP</button>
+      <button class="button is-pulled-right" @click="clearTrip">Clear Trip</button>
     </div>
 
     <div class="columns">
@@ -48,14 +50,11 @@
         </table>
       </div>
     </div>
-
-    {{waypoint}}
-
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapState, mapGetters } from "vuex"
 import LineChart from '@/components/LineChart'
 
 export default {
@@ -78,6 +77,9 @@ export default {
       'plotPidOutputData',
       'heading',
     ]),
+    ...mapGetters([
+      'numCompletedWaypoints',
+    ]),
     asvPosition() {
       return this.currentPosition
     }
@@ -91,6 +93,7 @@ export default {
       tripCircles: [],
       plotData: null,
       pidPlotData: null,
+      flagIcon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
       pidPlotOptions: {
         animation: false,
         responsive: true,
@@ -135,6 +138,18 @@ export default {
     this.initMap()
   },
   watch: {
+    numCompletedWaypoints (newVal, oldVal) {
+      for (var i=0; i < this.tripMarkers.length; i++) {
+        // if we have completed this waypoint then we set a new icon
+        // so its clear to visually determine which waypoints have been completed
+        if (i < this.numCompletedWaypoints) {
+          let marker = this.tripMarkers[i]
+          if (marker.getIcon() !== this.flagIcon){
+            marker.setIcon(this.flagIcon)
+          }
+        }
+      }
+    },
     trip (newVal, oldVal) {
       this.updateTrip()
     },
@@ -234,7 +249,11 @@ export default {
       })
       this.updateTrip()
     },
-    updateTrip() {
+    clearTrip() {
+      this.deleteMarkers()
+      this.$store.commit('CLEAR_TRIP')
+    },
+    deleteMarkers() {
       for (var i = 0; i < this.tripMarkers.length; i++) {
         this.tripMarkers[i].setMap(null)
       }
@@ -243,7 +262,10 @@ export default {
         this.tripCircles[i].setMap(null)
       }
       this.tripCircles = []
-      
+    },
+    updateTrip() {
+      // redraw the trip markers
+      this.deleteMarkers()
       for (let i=0; i<this.trip.length; i++) {
         let waypoint = this.trip[i]
         let marker = new google.maps.Marker({
@@ -251,7 +273,7 @@ export default {
           draggable: true,
           map: this.map, 
           label: (i + 1).toString()
-        })
+        })         
         var circle = new google.maps.Circle({
           strokeColor: '#FF0000',
           strokeOpacity: 0.8,
@@ -291,13 +313,20 @@ export default {
       this.$wamp.call("nav.move_to_waypoint", [this.waypoint])
     },
     startTrip() {
+      this.updateTrip()
       this.$wamp.call("nav.start_trip", [this.trip])
-    }
+    },
+    resumeTrip() {
+      this.$wamp.call("nav.resume_trip")
+    },
+    stop() {
+      this.$wamp.call("nav.stop")
+    },
   }
 };
 </script>
 
-<style>
+<style scoped>
   #map {
     width: 100%;
     height: 200px; 
@@ -321,6 +350,7 @@ export default {
     white-space: nowrap;
   }
   .section {
+    padding-top: 24px;
     width: 100%;
   }
 </style>
