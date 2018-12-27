@@ -11,6 +11,7 @@ Object.defineProperty(Vuex.Store.prototype, '$http', {value: axios})
 export default new Vuex.Store({
   state: {
     user: {},
+    teamMembers: [],
     auvs: [],
     activeAuv: null,
     auvLastSeen: null,
@@ -30,7 +31,8 @@ export default new Vuex.Store({
     plotTargetHeadingData: [],
     plotHeadingErrorData: [],
     plotPidOutputData: [],
-    plotLabels: []
+    plotLabels: [],
+    waypointCircleRadius: 10,  // radius is in meters
   },
   mutations: {
     SET_USER (state, data) {
@@ -41,6 +43,9 @@ export default new Vuex.Store({
       if (state.auvs.length == 1) {
         state.activeAuv = state.auvs[0]
       }
+    },
+    SET_WAYPOINT_RADIUS (state, radius) {
+      state.waypointCircleRadius = radius
     },
     SET_ACTIVE_AUV (state, data) {
       state.activeAuv = data
@@ -99,6 +104,9 @@ export default new Vuex.Store({
     },
     REMOVE_WAYPOINT (state, data) {
       state.trip.pop()
+    },
+    SET_TEAM_MEMBERS (state, data) {
+      state.teamMembers = data
     }
   },
   getters: {
@@ -108,6 +116,9 @@ export default new Vuex.Store({
       } else {
         return 0
       }
+    },
+    isAdmin (state) {
+      return state.user.role === 'admin'
     }
   },
   actions: {
@@ -120,9 +131,18 @@ export default new Vuex.Store({
       }, 6000)
     },
     getUser (context) {
-      this.$http.get('api/users/me/')
+      this.$http.get('api/me/')
         .then(response => {
           context.commit('SET_USER', response.data)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    getTeamMembers (context) {
+      this.$http.get('api/teams/' + context.state.user.team + '/members/')
+        .then(response => {
+          context.commit('SET_TEAM_MEMBERS', response.data)
         })
         .catch(error => {
           console.error(error)

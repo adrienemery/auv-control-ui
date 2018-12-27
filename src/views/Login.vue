@@ -1,31 +1,13 @@
 <template>
   <section class="hero is-fullheight login">
-    <div class="hero-body">
-      <div class="container has-text-centered">
+      <div class="has-text-centered">
         <div class="column is-4 is-offset-4">
           <!-- <span class="icon"><i class="fas fa-3x fa-ship logo"></i></span> -->
           <img src="../assets/submarine-100.png" alt="">
           <p class="subtitle has-text-grey">AUV Control</p>
-          <div class="box">
-            <form>
-              <div class="field">
-                <div class="control">
-                  <input v-model="username" class="input is-large" type="text" placeholder="username" autofocus="">
-                </div>
-              </div>
-
-              <b-field :type="passwordType" :message="passwordErrorMsg">
-                <b-input type="password" size="is-large" v-model="password" placeholder="password">
-                </b-input>
-              </b-field>
-              <a class="button is-block login-btn is-large is-fullwidth" @click="login">Login</a>
-            </form>
-          </div>
-          <p class="has-text-grey">
-          </p>
+          <router-view></router-view>
         </div>
       </div>
-    </div>
   </section>
 
 </template>
@@ -33,54 +15,6 @@
 <script>
 export default {
   name: 'login',
-  data () {
-    return {
-      username: '',
-      password: '',
-      passwordType: '',
-      passwordErrorMsg: ''
-    }
-  },
-  beforeMount () {
-    if (this.$wamp.isOpen()) {
-      this.$wamp.close()
-    }
-  },
-  watch: {
-    password(newVal, oldVal) {
-      this.passwordType = ''
-      this.passwordErrorMsg = ''
-    }
-  },
-  methods: {
-    login () {
-      console.log('login')
-      let vm = this
-       
-      this.$http.post('api/auth/token/login/', {}, {
-        headers: {},
-        auth: {
-          username: this.username,
-          password: this.password
-        }
-      })
-        .then( (response) => {
-          if (response.status === 200) {
-            vm.$store.commit('SET_USER', response.data.user)
-            let token = response.data.token
-            localStorage.setItem('authToken', token)
-            this.$wamp.open()
-            vm.$router.push('dash')
-          } else {
-            vm.passwordType = 'is-danger'
-            vm.passwordErrorMsg = 'Invalid username or password'
-          }
-        })
-        .catch( (error) => {
-          console.error(error)
-        })
-    }
-  }
 }
 </script>
 
@@ -97,7 +31,6 @@ export default {
 
   .login-btn {
     background: #89bdd3;
-    color: white;
   }
 
 </style>

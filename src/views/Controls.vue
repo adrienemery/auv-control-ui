@@ -47,7 +47,8 @@ export default {
   computed: {
     ...mapState([
       'auvData',
-      'controlData'
+      'controlData',
+      'waypointCircleRadius'
     ])
   },
   created () {
@@ -74,6 +75,7 @@ export default {
         response => {
             console.log(response)
             this.waypointDistance = response.target_waypoint_distance
+            this.$store.commit('SET_WAYPOINT_RADIUS', this.waypointDistance)
         },
         error => {
           console.log(error);
@@ -81,6 +83,7 @@ export default {
       )
     },
     setWaypointDistance() {
+      this.$store.commit('SET_WAYPOINT_RADIUS', this.waypointDistance)
       this.$wamp.call("nav.set_target_waypoint_distance", [this.waypointDistance]).then(
         response => {
             console.log(response)

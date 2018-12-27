@@ -20,34 +20,7 @@
       <div class="column chart is-half">
         <!-- Chart -->
         <line-chart :chart-data="plotData" :options="plotOptions" :height="200"/>        
-      </div>
-    </div>
-
-    <div class="columns">
-      <div class="column">
         <line-chart :chart-data="pidPlotData" :options="pidPlotOptions" :height="200"/>
-      </div>
-      <div class="column">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Left Motor</th>
-              <th>Right Motor</th>
-              <th>Throttle</th>
-              <th>Turn Speed</th>
-              <th>Trim</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="auvData">
-              <td>{{auvData.left_motor_speed}}</td>
-              <td>{{auvData.right_motor_speed}}</td>
-              <td>{{auvData.throttle}}</td>
-              <td>{{parseInt(auvData.turn_speed)}}</td>
-              <td>{{auvData.trim}}</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
@@ -76,6 +49,7 @@ export default {
       'plotHeadingErrorData',
       'plotPidOutputData',
       'heading',
+      'waypointCircleRadius',
     ]),
     ...mapGetters([
       'numCompletedWaypoints',
@@ -282,7 +256,7 @@ export default {
           fillOpacity: 0.35,
           map: this.map,
           center: waypoint,
-          radius: 10
+          radius: this.waypointCircleRadius
         })
         this.tripCircles.push(circle)
         this.tripMarkers.push(marker)
@@ -329,7 +303,7 @@ export default {
 <style scoped>
   #map {
     width: 100%;
-    height: 200px; 
+    height: 400px; 
     min-width:300px;
     background-color: grey;
   }

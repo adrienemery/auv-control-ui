@@ -6,6 +6,10 @@ import Dashboard from './views/Dashboard.vue'
 import Debug from './views/Debug.vue'
 import Controls from './views/Controls.vue'
 import Settings from './views/Settings.vue'
+import Team from './views/Team.vue'
+import Security from './views/Security.vue'
+import ForgotPassword from './components/ForgotPassword.vue'
+import LoginComponent from './components/LoginComponent.vue'
 
 Vue.use(Router)
 
@@ -37,12 +41,33 @@ export default new Router({
           name: 'settings',
           component: Settings
         },
+        {
+          path: '/team',
+          name: 'team',
+          component: Team
+        },
+        {
+          path: '/security',
+          name: 'security',
+          component: Security
+        }
       ]
     },
     {
-      path: '/login',
-      name: 'login',
-      component: Login
+      path: '/',
+      component: Login,
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: LoginComponent
+        },
+        {
+          path: 'forgot-password',
+          name: 'forgotPassword',
+          component: ForgotPassword
+        },
+      ]
     },
   ]
 })

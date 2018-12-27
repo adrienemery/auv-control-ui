@@ -37,7 +37,7 @@
           </a>
         </div>
 
-        <div class="navbar-menu" :class="{ 'is-active': showNav }">
+        <div class="navbar-menu" :class="{ 'is-active': showNav }" v-if="showNav">
           <div class="navbar-end">
             <a class="navbar-item" @click="logout">
               Logout
@@ -59,8 +59,8 @@
                   <span>{{user.first_name}}</span>
                   <b-icon icon="angle-down"></b-icon>
               </a>
-              <b-dropdown-item>
-                <span class="icon"><i class="fa fa-cog"></i></span><span class="name">Settings</span>
+              <b-dropdown-item has-link='true'>
+                <router-link to="/security"><span class="icon is-info"><i class="fa fa-lock"></i></span><span class="name">Security</span></router-link>
               </b-dropdown-item>
               <b-dropdown-item @click="logout">
                 <span class="icon"><i class="fa fa-sign-out-alt"></i></span><span class="name">Logout</span>
@@ -87,8 +87,11 @@
             <li>
               <router-link to="/settings" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"> Settings</span></router-link>
             </li>
+            <li v-if="isAdmin">
+              <router-link to="/team" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-users"></i></span><span class="name"> Team</span></router-link>
+            </li>
           </ul>
-      </div>
+      </div>      
     </aside>
 
     <aside class="sidebar-collapsed hero is-fullheight is-hidden-desktop">
@@ -106,6 +109,9 @@
               </li>
               <li>
                 <router-link to="/settings" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"></span></router-link>
+              </li>
+              <li v-if="isAdmin">
+                <router-link to="/team" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-users"></i></span><span class="name"></span></router-link>
               </li>
             </ul>
           </div>
@@ -128,7 +134,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'home',
@@ -140,8 +146,11 @@ export default {
       'navData',
       'rcData',
       'controlMode',
-      'user'
-    ])
+      'user',
+    ]),
+    ...mapGetters([
+      'isAdmin',
+    ]),
   },
   data() {
     return {
