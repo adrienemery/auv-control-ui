@@ -95,7 +95,7 @@ function isAuthorized () {
 // and redirect to the login page
 router.beforeEach((to, from, next) => {
   console.log(to.name)
-  if (to.name !== 'login' && to.name !== 'forgotPassword' && isAuthorized() === false) {
+  if (to.name !== 'login' && to.name !== 'forgotPassword' && to.name != 'activate' && isAuthorized() === false) {
     next('/login')
   } else {  
     console.log(to)

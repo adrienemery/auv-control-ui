@@ -1,26 +1,43 @@
 <template>
   <div class="section">
-    
-    <!-- Top Buttons -->
-    <div class="buttons" style="margin-bottom: 20px; margin-top: 5px">
-      <button class="button is-info" @click="startTrip">Start</button>
-      <button class="button" @click='stop'>Pause</button>
-      <button class="button" @click='resumeTrip'>Resume</button>
-      <button class="button is-success is-pulled-right" @click="addWaypoint">+WP</button>
-      <button class="button is-danger is-pulled-right" @click="removeWaypoint">-WP</button>
-      <button class="button is-pulled-right" @click="clearTrip">Clear Trip</button>
-    </div>
 
     <div class="columns">
+
+      <!-- Left Hand Side -->
       <div class="column is-half">
+
+        <!-- Top Buttons -->
+        <div class="buttons" style="margin-bottom: 20px; margin-top: 5px">
+          <button class="button is-info" @click="startTrip">Start</button>
+          <button class="button" @click='stop'>Pause</button>
+          <button class="button" @click='resumeTrip'>Resume</button>
+          <button class="button is-success is-pulled-right" @click="addWaypoint">+WP</button>
+          <button class="button is-danger is-pulled-right" @click="removeWaypoint">-WP</button>
+          <button class="button is-pulled-right" @click="clearTrip">Clear Trip</button>
+        </div>
+
         <!-- Map -->
         <div ref="map" id="map"></div>
       </div>
 
-      <div class="column chart is-half">
-        <!-- Chart -->
-        <line-chart :chart-data="plotData" :options="plotOptions" :height="200"/>        
-        <line-chart :chart-data="pidPlotData" :options="pidPlotOptions" :height="200"/>
+      <!-- Right Hand Side -->
+      <div class="column is-half">
+         <b-tabs v-model="activeTab">
+
+            <b-tab-item label="Charts">
+              <div class="chart">
+                <!-- Charts -->
+                <line-chart :chart-data="plotData" :options="plotOptions" :height="200"/>        
+                <line-chart :chart-data="pidPlotData" :options="pidPlotOptions" :height="200"/>
+              </div>
+            </b-tab-item>
+
+            <b-tab-item label="Camera">
+                <img :src="img" alt="" height="400px">
+            </b-tab-item>
+
+        </b-tabs>
+        
       </div>
     </div>
   </div>
@@ -37,6 +54,7 @@ export default {
   },
   computed: {
     ...mapState([
+      'img',
       'currentPosition',
       'auvData',
       'navData',
@@ -56,10 +74,11 @@ export default {
     ]),
     asvPosition() {
       return this.currentPosition
-    }
+    },
   },
   data() {
     return {
+      activeTab: 0,
       center: { lat: 49.2827, lng: -123.1207 },
       showAsvMarker: true,
       showMarkerCircles: true,

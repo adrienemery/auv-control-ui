@@ -59,7 +59,7 @@
                   <span>{{user.first_name}}</span>
                   <b-icon icon="angle-down"></b-icon>
               </a>
-              <b-dropdown-item has-link='true'>
+              <b-dropdown-item has-link=true>
                 <router-link to="/security"><span class="icon is-info"><i class="fa fa-lock"></i></span><span class="name">Security</span></router-link>
               </b-dropdown-item>
               <b-dropdown-item @click="logout">
@@ -175,6 +175,9 @@ export default {
     })
     this.$wamp.subscribe('ahrs.update', function(args) {
       this.$store.commit('UPDATE_AHRS_DATA', args[0])
+    })
+    this.$wamp.subscribe('camera.update', function(args) {
+      this.$store.commit('UPDATE_CAMERA_DATA', args[0])
     })
     
     this.$store.dispatch('getUser')

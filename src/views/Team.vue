@@ -2,26 +2,29 @@
     <div class='section'>  
         <!-- Main container -->
         <nav class="level">
-        <!-- Left side -->
-        <div class="level-left">
-            <div class="level-item">
-                <div class="field has-addons">
-                    <p class="control">
-                        <input class="input" type="text" placeholder="Find a post">
-                    </p>
-                    <p class="control">
-                        <button class="button">
-                            Search
-                        </button>
-                    </p>
+            <!-- Left side -->
+            <div class="level-left">
+                <div class="level-item">
+                    <div class="field has-addons">
+                        <p class="control">
+                            <input class="input" type="text" placeholder="Find a post">
+                        </p>
+                        <p class="control">
+                            <button class="button">
+                                Search
+                            </button>
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Right side -->
-        <div class="level-right">
-            <a class="level-item button is-success is-outlined"><span class="icon"><i class="fas fa-user-plus"></i></span><span>Add</span></a>
-        </div>
+            <!-- Right side -->
+            <div class="level-right">
+                <a class="level-item button is-success is-outlined" @click="isAddTeamMemberModalActive = true"><span class="icon"><i class="fas fa-user-plus"></i></span><span>Add</span></a>
+            </div>
+            <b-modal :active.sync="isAddTeamMemberModalActive" has-modal-card>
+                <add-team-member></add-team-member>
+            </b-modal>
         </nav>
         <div class="columns">
             <div class="column">
@@ -51,10 +54,14 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex"
+import AddTeamMember from "@/components/AddTeamMember.vue"
 
 export default {
   name: "controls",
+  components: {
+    AddTeamMember
+  },
   computed: {
     ...mapState([
       'teamMembers'
@@ -68,7 +75,7 @@ export default {
   },
   data() {
     return {
-        
+       isAddTeamMemberModalActive: false, 
     };
   },
   methods: {

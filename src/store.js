@@ -33,6 +33,7 @@ export default new Vuex.Store({
     plotPidOutputData: [],
     plotLabels: [],
     waypointCircleRadius: 10,  // radius is in meters
+    img: '',
   },
   mutations: {
     SET_USER (state, data) {
@@ -79,6 +80,9 @@ export default new Vuex.Store({
         state.currentPosition = {lat: data.lat, lng: data.lng}
       }
     },
+    UPDATE_CAMERA_DATA (state, data) {
+      state.img = data.img
+    },
     UPDATE_AHRS_DATA (state, data) {
       state.heading = data.heading
       state.roll = data.roll
@@ -107,6 +111,9 @@ export default new Vuex.Store({
     },
     SET_TEAM_MEMBERS (state, data) {
       state.teamMembers = data
+    },
+    ADD_TEAM_MEMBER (state, data) {
+      state.teamMembers.push(data)
     }
   },
   getters: {
@@ -143,6 +150,27 @@ export default new Vuex.Store({
       this.$http.get('api/teams/' + context.state.user.team + '/members/')
         .then(response => {
           context.commit('SET_TEAM_MEMBERS', response.data)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    addTeamMember (context, userData) {
+      console.log(context, userData)
+      // to add a team member first we create a user 
+      // and then we add the user to the team
+      this.$http.post('api/users/', userData)
+        .then(response => {
+          let userId = response.data.id
+          let teamMemberData = {
+            user: userId,
+            role: 'pilot'  // TODO make this a variable
+          }
+          this.$http.post('api/teams/' + context.state.user.team + '/members/', teamMemberData)
+            .then(response => {
+              console.log('add team member')
+              context.commit('ADD_TEAM_MEMBER', response.data)
+            })
         })
         .catch(error => {
           console.error(error)

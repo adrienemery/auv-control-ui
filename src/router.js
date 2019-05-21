@@ -10,6 +10,7 @@ import Team from './views/Team.vue'
 import Security from './views/Security.vue'
 import ForgotPassword from './components/ForgotPassword.vue'
 import LoginComponent from './components/LoginComponent.vue'
+import ActivateAccount from './views/ActivateAccount.vue'
 
 Vue.use(Router)
 
@@ -67,6 +68,11 @@ export default new Router({
           name: 'forgotPassword',
           component: ForgotPassword
         },
+        {
+          path: 'activate/:uid/:token',
+          name: 'activate',
+          component: ActivateAccount
+        }
       ]
     },
   ]

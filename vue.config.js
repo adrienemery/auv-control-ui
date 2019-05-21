@@ -3,7 +3,7 @@ module.exports = {
 
   devServer: {  
     useLocalIp: false,
-    public: 'http://localhost:8081'
+    public: 'http://localhost:8080'
   },
 
   pluginOptions: {
