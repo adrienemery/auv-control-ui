@@ -34,6 +34,7 @@ export default new Vuex.Store({
     plotLabels: [],
     waypointCircleRadius: 10,  // radius is in meters
     img: '',
+    mini: false,
   },
   mutations: {
     SET_USER (state, data) {

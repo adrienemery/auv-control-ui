@@ -31,8 +31,8 @@
                 type="password"
               ></v-text-field>
               <v-layout justify-space-between>
-                  <v-btn color="primary">Login</v-btn>
-                  <router-link to="forgot-password" class="text--secondary">Forgot Password</router-link>
+                <v-btn color="primary">Login</v-btn>
+                <router-link to="forgot-password" class="text--secondary">Forgot Password</router-link>
               </v-layout>  
             </v-form>
           </v-card-text>

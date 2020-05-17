@@ -1,54 +1,77 @@
 <template>
   <div>
-    <v-navigation-drawer app clipped>
+    <!-- sidebar -->
+    <v-navigation-drawer 
+      app 
+      clipped 
+      :mini-variant.sync="mini"
+      v-model="showDrawer"
+      >
       <v-list nav>
-        <v-list-item>
+        <v-list-item to="/dash">
           <v-list-item-icon>
             <v-icon>fa-tachometer-alt</v-icon>
           </v-list-item-icon>
           <v-list-item-title>
             Dashboard
-            <!-- <router-link to="/dash" >Dashboard</router-link> -->
           </v-list-item-title>
         </v-list-item>
 
-        <v-list-item nav>
-          <v-list-item-content>
-            <v-list-item-title>
-              <router-link to="/controls" >Control</router-link>
-            </v-list-item-title>
-          </v-list-item-content>
+        <v-list-item to="/controls">
+          <v-list-item-icon>
+            <v-icon>fa-compass</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            Navigation
+          </v-list-item-title>
         </v-list-item>
 
-        <v-list-item nav>
-          <v-list-item-content>
-            <v-list-item-title>
-              <router-link to="/debug" >Debug</router-link>
-            </v-list-item-title>
-          </v-list-item-content>
+        <v-list-item to="/debug">
+          <v-list-item-icon>
+            <v-icon>fa-terminal</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            Debug
+          </v-list-item-title>
         </v-list-item>
 
-        <v-list-item nav>
-          <v-list-item-content>
-            <v-list-item-title>
-              <router-link to="/settings" >Settings</router-link>
-            </v-list-item-title>
-          </v-list-item-content>
+        <v-list-item to="/settings">
+          <v-list-item-icon>
+            <v-icon>fa-cog</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            Setting
+          </v-list-item-title>
         </v-list-item>
 
-        <v-list-item nav>
-          <v-list-item-content>
-            <v-list-item-title>
-              <router-link to="/team" >Team</router-link>
-            </v-list-item-title>
-          </v-list-item-content>
+        <v-list-item to="/team">
+          <v-list-item-icon>
+            <v-icon>fa-users</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            Team
+          </v-list-item-title>
         </v-list-item>
       </v-list>
-          
+
+      <div>
+        <v-spacer></v-spacer>
+        <v-btn icon @click.stop="mini = !mini">
+          <v-icon v-if="!mini">fa-chevron-left</v-icon>
+          <v-icon v-else>fa-chevron-right</v-icon>
+        </v-btn>
+      </div>
+
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn block outlined color='primary'>Logout</v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
 
+    <!-- top bar -->
     <v-app-bar app clipped-left dark dense flat>
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click="showDrawer = !showDrawer"></v-app-bar-nav-icon>
       <v-chip 
         class="ma-2"
         :color="wampStatus === 'Connected' ? 'green' : 'red'">
@@ -59,148 +82,27 @@
         :color="auvStatus === 'Connected' ? 'green' : 'red'">
         AUV
       </v-chip>
-      <v-chip class="ma-2" :color="navData && navData.enabled ? 'green' : ''">AutoPilot</v-chip>
+      <v-chip 
+        class="ma-2" 
+        :color="navData && navData.enabled ? 'green' : ''">
+        AutoPilot
+      </v-chip>
+      <v-chip 
+        class="ma-2" 
+        :color="rcData.armed ? 'green' : ''">
+        RC
+      </v-chip>
+      <v-spacer></v-spacer>
+      <v-btn color="info" outlined @click="stop">Stop</v-btn>
     </v-app-bar>
 
-
-    <!-- Sizes your content based upon application components -->
-  <v-content>
-
-    <!-- Provides the application the proper gutter -->
-    <v-container fluid>
-
-      <!-- If using vue-router -->
-      <router-view></router-view>
-    </v-container>
-  </v-content>
-
-    
-
-    <!-- <nav class="has-shadowp">
-        <div class="navbar-brand">
-          <div class="navbar-item">
-              <span>WAMP: 
-                <span v-if="wampStatus === 'Connected'" class="tag is-success">On</span>
-                <span v-else class="tag is-danger">Off</span>
-              </span>  
-          </div>
-          <div class="navbar-item">
-              <span>AUV: 
-                <span v-if="auvStatus === 'Connected'" class="tag is-success">On</span>
-                <span v-else class="tag is-danger">Off</span>
-              </span>  
-          </div>
-
-          <div class="navbar-item">
-            <span v-if="navData && navData.enabled">Auto: <span class="tag is-success">On</span></span>  
-            <span v-else>Auto: <span class="tag is-danger">Off</span></span>
-          </div>
-          
-          <div class="navbar-item">
-            <span v-if="rcData.armed">RC: <span class="tag is-success">On</span></span>  
-            <span v-else>RC: <span class="tag is-danger">Off</span></span>
-          </div>
-          <div class="navbar-item">
-            <button class="button is-danger" @click="stop">Stop</button>
-          </div>
-
-          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu" @click="showNav = !showNav" :class="{ 'is-active': showNav }">
-            <span></span>
-            <span></span>
-            <span></span>
-          </a>
-        </div>
-
-        <div class="navbar-menu" :class="{ 'is-active': showNav }" v-if="showNav">
-          <div class="navbar-end">
-            <a class="navbar-item" @click="logout">
-              Logout
-            </a>
-          </div>
-        </div>
-
-        <div id="navMenu" class="navbar-menu">
-          <div class="navbar-end">
-            <div class="navbar-item">
-              <span class="icon"><i class="fa fa-2x fa-battery-three-quarters"></i></span>
-            </div>
-            <div class="navbar-item">
-              <span class="name">75%</span>
-            </div>
-            <b-dropdown class="navbar-item">
-              <a class="button" slot="trigger">
-                  <b-icon icon="user-circle"></b-icon>
-                  <span>{{user.first_name}}</span>
-                  <b-icon icon="angle-down"></b-icon>
-              </a>
-              <b-dropdown-item has-link=true>
-                <router-link to="/security"><span class="icon is-info"><i class="fa fa-lock"></i></span><span class="name">Security</span></router-link>
-              </b-dropdown-item>
-              <b-dropdown-item @click="logout">
-                <span class="icon"><i class="fa fa-sign-out-alt"></i></span><span class="name">Logout</span>
-              </b-dropdown-item>
-            </b-dropdown>
-          </div>
-        </div>
-    </nav> -->
-    <!-- End Navbar -->
-
-    <!-- Sidebar -->
-    <!-- <aside class="hero is-fullheight is-hidden-mobile is-hidden-tablet-only">        
-        <div class="menu">
-          <ul class="menu-list">
-            <li>
-              <router-link to="/dash" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"> Dashboard</span></router-link>
-            </li>
-            <li>
-              <router-link to="/controls" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"> Navigation</span></router-link>
-            </li>
-            <li>
-              <router-link to="/debug" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"> Debug</span></router-link>
-            </li>
-            <li>
-              <router-link to="/settings" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"> Settings</span></router-link>
-            </li>
-            <li v-if="isAdmin">
-              <router-link to="/team" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-users"></i></span><span class="name"> Team</span></router-link>
-            </li>
-          </ul>
-      </div>      
-    </aside> -->
-
-    <!-- <aside class="sidebar-collapsed hero is-fullheight is-hidden-desktop">
-        <div>
-          <div class="menu">
-            <ul class="menu-list">
-              <li>
-                <router-link to="/dash" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fa fa-tachometer-alt"></i></span><span class="name"></span></router-link>
-              </li>
-              <li>
-                <router-link to="/controls" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-compass"></i></span><span class="name"></span></router-link>
-              </li>
-              <li>
-                <router-link to="/debug" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-terminal"></i></span><span class="name"></span></router-link>
-              </li>
-              <li>
-                <router-link to="/settings" active-class="is-active" class="sidebar-item"><span class="icon"><i class="fas fa-cog"></i></span><span class="name"></span></router-link>
-              </li>
-              <li v-if="isAdmin">
-                <router-link to="/team" active-class="is-active" class="sidebar-item has-text-left"><span class="icon"><i class="fas fa-users"></i></span><span class="name"></span></router-link>
-              </li>
-            </ul>
-          </div>
-        </div>
-    </aside> -->
-    <!-- End Sidebar -->
-
-    <!-- <div class="main is-hidden-mobile is-hidden-tablet-only">
+    <!-- Main content -->
+    <v-content>
+      <v-container fluid>
         <router-view></router-view>
-    </div>
-    <div class="main-collapsed is-hidden-desktop">
-        <router-view></router-view>
-    </div> -->
+      </v-container>
+    </v-content>
   </div>
-
 </template>
 
 <script>
@@ -224,7 +126,8 @@ export default {
   },
   data() {
     return {
-      showNav: false,
+      mini: false,
+      showDrawer: true,
     }
   },
   created () {

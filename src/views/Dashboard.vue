@@ -1,5 +1,19 @@
 <template>
-  <div class="section">
+  <div>
+    <v-toolbar dense flat>
+      <v-btn class="mr-2" @click="startTrip" color="primary" depressed>
+        Start
+      </v-btn>
+      <v-btn class="ma-2" @click="stop" color="error" outlined depressed>
+        Stop
+      </v-btn>
+      <v-btn class="ma-2" @click="resumeTrip" color="secondary" depressed>
+        Resume
+      </v-btn>
+      <v-btn class="ma-2" @click="addWaypoint" depressed square>+WP</v-btn>
+      <v-btn class="ma-2" @click="removeWaypoint" depressed>-WP</v-btn>
+      <v-btn class="ma-2" @click="clearTrip" depressed>Clear</v-btn>
+    </v-toolbar>
 
     <div class="columns">
 
@@ -8,15 +22,11 @@
 
         <!-- Top Buttons -->
         <div class="buttons" style="margin-bottom: 20px; margin-top: 5px">
-          <button class="button is-info" @click="startTrip">Start</button>
-          <button class="button" @click='stop'>Pause</button>
-          <button class="button" @click='resumeTrip'>Resume</button>
-          <button class="button is-success is-pulled-right" @click="addWaypoint">+WP</button>
-          <button class="button is-danger is-pulled-right" @click="removeWaypoint">-WP</button>
-          <button class="button is-pulled-right" @click="clearTrip">Clear Trip</button>
+          
         </div>
 
         <!-- Map -->
+        
         <div ref="map" id="map"></div>
       </div>
 
