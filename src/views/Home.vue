@@ -1,8 +1,82 @@
 <template>
   <div>
-    <!-- Navbar -->
-    <nav class="navbar has-shadow is-fixed-top">
-        <!-- Icon -->
+    <v-navigation-drawer app clipped>
+      <v-list nav>
+        <v-list-item>
+          <v-list-item-icon>
+            <v-icon>fa-tachometer-alt</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>
+            Dashboard
+            <!-- <router-link to="/dash" >Dashboard</router-link> -->
+          </v-list-item-title>
+        </v-list-item>
+
+        <v-list-item nav>
+          <v-list-item-content>
+            <v-list-item-title>
+              <router-link to="/controls" >Control</router-link>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item nav>
+          <v-list-item-content>
+            <v-list-item-title>
+              <router-link to="/debug" >Debug</router-link>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item nav>
+          <v-list-item-content>
+            <v-list-item-title>
+              <router-link to="/settings" >Settings</router-link>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item nav>
+          <v-list-item-content>
+            <v-list-item-title>
+              <router-link to="/team" >Team</router-link>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+          
+    </v-navigation-drawer>
+
+    <v-app-bar app clipped-left dark dense flat>
+      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      <v-chip 
+        class="ma-2"
+        :color="wampStatus === 'Connected' ? 'green' : 'red'">
+        WAMP
+      </v-chip>
+      <v-chip 
+        class="ma-2" 
+        :color="auvStatus === 'Connected' ? 'green' : 'red'">
+        AUV
+      </v-chip>
+      <v-chip class="ma-2" :color="navData && navData.enabled ? 'green' : ''">AutoPilot</v-chip>
+    </v-app-bar>
+
+
+    <!-- Sizes your content based upon application components -->
+  <v-content>
+
+    <!-- Provides the application the proper gutter -->
+    <v-container fluid>
+
+      <!-- If using vue-router -->
+      <router-view></router-view>
+    </v-container>
+  </v-content>
+
+    
+
+    <!-- <nav class="has-shadowp">
         <div class="navbar-brand">
           <div class="navbar-item">
               <span>WAMP: 
@@ -68,11 +142,11 @@
             </b-dropdown>
           </div>
         </div>
-    </nav>
+    </nav> -->
     <!-- End Navbar -->
 
     <!-- Sidebar -->
-    <aside class="sidebar hero is-fullheight is-hidden-mobile is-hidden-tablet-only">        
+    <!-- <aside class="hero is-fullheight is-hidden-mobile is-hidden-tablet-only">        
         <div class="menu">
           <ul class="menu-list">
             <li>
@@ -92,9 +166,9 @@
             </li>
           </ul>
       </div>      
-    </aside>
+    </aside> -->
 
-    <aside class="sidebar-collapsed hero is-fullheight is-hidden-desktop">
+    <!-- <aside class="sidebar-collapsed hero is-fullheight is-hidden-desktop">
         <div>
           <div class="menu">
             <ul class="menu-list">
@@ -116,19 +190,15 @@
             </ul>
           </div>
         </div>
-    </aside>
+    </aside> -->
     <!-- End Sidebar -->
 
-    <div class="main is-hidden-mobile is-hidden-tablet-only">
-      <!-- Content Right Hand Side -->
+    <!-- <div class="main is-hidden-mobile is-hidden-tablet-only">
         <router-view></router-view>
-      <!-- End Content -->
     </div>
     <div class="main-collapsed is-hidden-desktop">
-      <!-- Content Right Hand Side -->
         <router-view></router-view>
-      <!-- End Content -->
-    </div>
+    </div> -->
   </div>
 
 </template>
@@ -200,44 +270,4 @@ export default {
 
 <style scoped>
 
-  html,body {
-    font-family: 'Open Sans', serif;
-    font-size: 14px;
-    line-height: 1.5;
-    height: 100%;
-    background-color: #fff;
-  }
-  .main {
-    margin-left: 150px;
-    overflow: scroll;
-  }
-  .main-collapsed {
-    margin-left: 50px;
-    overflow: scroll;
-  }
-  .sidebar {
-    width: 150px;
-    display: block;
-    background-color: #F9F9F9;
-    border-right: 1px solid #dedede;
-    position: fixed;
-    top: 50px;
-    z-index: 1;
-  }
-  .sidebar-collapsed {
-    width: 50px;    
-    display: block;
-    background-color: #F9F9F9;
-    border-right: 1px solid #dedede;
-    position: fixed;
-    top: 30;
-    z-index: 1;
-  }
-  .sidebar-item {
-    margin: 0.1em;
-    color: gray;
-  }
-  .sidebar-top-btn {
-    margin: 1em;
-  }
 </style>
