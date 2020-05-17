@@ -1,12 +1,12 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
+import Vue from 'vue'
+import Vuetify from 'vuetify/lib'
 
-Vue.use(Vuetify);
+Vue.use(Vuetify)
 
 export default new Vuetify({
   theme: {
     themes: {
-      light: {
+      dark: {
         primary: '#ee44aa',
         secondary: '#424242',
         accent: '#82B1FF',
@@ -20,4 +20,4 @@ export default new Vuetify({
   icons: {
     iconfont: 'fa',
   },
-});
+})

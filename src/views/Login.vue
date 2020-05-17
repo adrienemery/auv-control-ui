@@ -1,15 +1,15 @@
 <template>
-  <section class="hero is-fullheight login">
-      <div class="has-text-centered">
-        <div class="column is-4 is-offset-4">
-          <!-- <span class="icon"><i class="fas fa-3x fa-ship logo"></i></span> -->
-          <img src="../assets/submarine-100.png" alt="">
-          <p class="subtitle has-text-grey">AUV Control</p>
-          <router-view></router-view>
+  <v-content>
+    <section class="hero is-fullheight login">
+        <div class="has-text-centered">
+          <div class="column is-4 is-offset-4">
+            <img src="../assets/submarine-100.png" alt="">
+            <p class="subtitle has-text-grey">AUV Control</p>
+            <router-view></router-view>
+          </div>
         </div>
-      </div>
-  </section>
-
+    </section>
+  </v-content>
 </template>
 
 <script>

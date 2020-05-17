@@ -1,14 +1,21 @@
 <template>
-  <div class="box">
-    <form>
-      <div class="field">
-        <div class="control">
-            <input v-model="email" class="input is-large" type="text" placeholder="email" autofocus="">
-        </div>
-      </div>
-      <button class="button is-block login-btn is-large is-fullwidth">Reset Password</button>
-    </form>
-    <router-link to="/login">Login</router-link>
+  <div>
+    <v-card outlined>
+      <v-card-text>
+        <v-form>
+          <v-text-field
+            label="Email"
+            name="email"
+            type="text"
+          ></v-text-field>
+
+          <v-layout justify-space-between>
+              <v-btn color="primary">Reset Password</v-btn>
+              <router-link to="/login" class="text--secondary">Login</router-link>
+          </v-layout>  
+        </v-form>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 

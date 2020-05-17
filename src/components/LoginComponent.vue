@@ -1,6 +1,6 @@
 <template>
-    <div class="box">
-        <form>
+    <div>
+        <!-- <form>
             <div class="field">
             <div class="control">
                 <input v-model="username" class="input is-large" type="text" placeholder="username" autofocus="">
@@ -12,8 +12,31 @@
             </b-input>
             </b-field>
             <button class="button is-block login-btn is-large is-fullwidth" @click="login">Login</button>
-        </form>
-        <router-link to="forgot-password">Forgot Password</router-link>
+        </form> -->
+        <v-card outlined>
+          <v-card-text>
+            <v-form>
+              <v-text-field
+                label="Email"
+                name="email"
+                prepend-icon="person"
+                type="text"
+              ></v-text-field>
+
+              <v-text-field
+                id="password"
+                label="Password"
+                name="password"
+                prepend-icon="lock"
+                type="password"
+              ></v-text-field>
+              <v-layout justify-space-between>
+                  <v-btn color="primary">Login</v-btn>
+                  <router-link to="forgot-password" class="text--secondary">Forgot Password</router-link>
+              </v-layout>  
+            </v-form>
+          </v-card-text>
+        </v-card>
     </div>
 </template>
 
